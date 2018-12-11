@@ -11,6 +11,7 @@ import { RESTApiHandler } from '../../utils/restApi.dataSource';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { KumulosDataService } from '../../utils/kumulos.dataSource';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';
+import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
@@ -29,16 +30,17 @@ export class DataSourceRouter {
     let capRes = res;
 
     if (dataRequest) {
+      var details = DataSourceHelper.prepareInputAndRows(
+        dataRequest.inputData,
+        dataRequest.rowData
+      );
+
       ds.dataSource
         .getDataSource(dataRequest.name)
         .subscribe(dataSouorce => {
           switch (dataSouorce.type) {
             case BaseDataSource.TypesRestApi: {
-              var details = DataSourceHelper.prepareInputAndRows(
-                dataRequest.inputData,
-                dataRequest.rowData
-              );
-
+             
               RESTApiHandler.runCommand(
                 dataRequest.name,
                 details.inputDetails,
@@ -62,12 +64,6 @@ export class DataSourceRouter {
             case BaseDataSource.TypesSQL: {
               var sqlDataSource = dataSouorce.dataSourceDetails as SqlDataSource;
 
-              var details = DataSourceHelper.prepareInputAndRows(
-                dataRequest.inputData,
-                dataRequest.rowData
-               
-              );
-
               SQLCommandHandler.runCommand(
                 dataRequest.name,
                 details.inputDetails,
@@ -78,6 +74,22 @@ export class DataSourceRouter {
                 capRes.status(500).send('Call failed');
               });
               break; 
+            }
+
+            case BaseDataSource.TypesDocumentDB: {
+              var details = DataSourceHelper.prepareInputAndRows(
+                dataRequest.inputData,
+                dataRequest.rowData
+              );
+
+              DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
+              .subscribe(dataResults => {
+                capRes.json(dataResults);
+              }, err => {
+                capRes.status(500).send('Call failed');
+              });
+              
+              break;
             }
 
             case BaseDataSource.TypesKumulos: {
