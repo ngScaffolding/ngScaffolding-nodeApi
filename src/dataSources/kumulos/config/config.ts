@@ -1,0 +1,1 @@
+export const API_Key: string = process.env.Kumulos_API_Key;

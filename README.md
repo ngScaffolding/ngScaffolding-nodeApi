@@ -1,2 +1,2 @@
-# ngScaffolding-nodeApi
-nodeAPI Endpoint for ngScaffolding
+# nodeApi
+ngScaffolding - node.js API Implementation
