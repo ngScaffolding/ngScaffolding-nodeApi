@@ -17,15 +17,17 @@ export default async function authoriseRequest(req: Request, res: Response, next
     apiToken = apiToken.replace('Bearer ','');
 
     // where no Token, allow access but no user Details
-    if (!apiToken || apiToken === 'null') return res.status(401).send({ message: 'No token provided.' });
+    //if (!apiToken || apiToken === 'null') return res.status(401).send({ message: 'No token provided.' });
 
     // Validate & Decode Token
     try{
         let jwtDetails = jwt.verify(apiToken, process.env.JWT_SECRET_FOR_ACCESS_TOKEN);
 
         var current_time = Date.now().valueOf();// / 1000;
-        if ( jwtDetails.exp < current_time) {
-            res.status(401).send({ message: 'Token Expired' });
+        if (jwtDetails.exp < current_time) {
+            req['userDetails'] = null;
+            return;
+            // res.status(401).send({ message: 'Token Expired' });
         }
         
         // Setup UserDetailsModel from Token Details
@@ -35,8 +37,9 @@ export default async function authoriseRequest(req: Request, res: Response, next
         req['userDetails'] = userDetails;
     
     }
-    catch(err){
-        return res.status(401).send({ message: 'Invalid Token' });
+    catch (err) {
+        req['userDetails'] = null;
+        // return res.status(401).send({ message: 'Invalid Token' });
     }
         
     next();
