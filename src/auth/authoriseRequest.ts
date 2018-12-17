@@ -17,7 +17,7 @@ export default async function authoriseRequest(req: Request, res: Response, next
     apiToken = apiToken.replace('Bearer ','');
 
     // where no Token, allow access but no user Details
-    if (!apiToken) return res.status(401).send({ message: 'No token provided.' });
+    if (!apiToken || apiToken === 'null') return res.status(401).send({ message: 'No token provided.' });
 
     // Validate & Decode Token
     try{

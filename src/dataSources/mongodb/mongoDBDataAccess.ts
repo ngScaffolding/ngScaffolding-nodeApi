@@ -9,7 +9,8 @@ import {
   ReferenceValue,
   UserPreferenceDefinition,
   UserPreferenceValue,
-  WidgetModelBase
+  WidgetModelBase,
+  AppSettingsValue
 } from '@ngscaffolding/models';
 import { DB } from './database.mongodb';
 import { IApplicationLog } from './models/applicationLog.model';
@@ -30,6 +31,11 @@ export class MongoDBDataAccess implements IDataAccessLayer {
           observer.complete();
         });
     });
+  }
+
+  // AppSettings
+  public getAppSettingsValues(): Observable<AppSettingsValue[]>{
+    return from(DB.getAppSettings());
   }
 
   // Widget

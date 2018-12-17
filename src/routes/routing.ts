@@ -1,5 +1,6 @@
 import * as express from 'express';
 import ApplicationLogRouter from '../controllers/applicationLog/applicationLog.router';
+import AppSettingsRouter from '../controllers/appSettings/appSettings.router';
 import ReferenceValuesRouter from '../controllers/referenceValues/referenceValues.router';
 import MenuItemRouter from '../controllers/menuItem/menuItem.router';
 import DataSourceRouter from '../controllers/dataSource/dataSource.router';
@@ -28,6 +29,7 @@ export class RouterSetup{
    // this.express.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.express.use('/', router);
     this.express.use('/api/v1/applicationLog', ApplicationLogRouter);
+    this.express.use('/api/v1/appsettings', AppSettingsRouter);
     this.express.use('/api/v1/referencevalues', isUserInRole('user'), ReferenceValuesRouter);
     this.express.use('/api/v1/menuitems', isUserInRole('user'), MenuItemRouter);
     this.express.use('/api/v1/datasource', isUserInRole('user'), DataSourceRouter);

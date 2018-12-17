@@ -38,7 +38,7 @@ class App {
     this.express.use(morgan('combined', { stream: winston.stream }));
     this.express.use(bodyParser.json());
     this.express.use(cors())
-    this.express.use(authoriseRequest);
+    //this.express.use(authoriseRequest);
     this.express.use(bodyParser.urlencoded({ extended: false }));
   }
 }

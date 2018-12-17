@@ -6,12 +6,13 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel, IUserPreferenceDefinition } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import { ReferenceValue, ErrorModel, UserPreferenceValue } from '@ngscaffolding/models';
+import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue } from '@ngscaffolding/models';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { UserPreferenceValueModel } from './models/userPreferenceValue.model';
 import { WidgetModel, IWidget } from './models/widget.model';
+import { AppSettingModel } from './models/appSetting.model';
 
 require('dotenv').config();
 
@@ -161,6 +162,16 @@ export class Database {
     public async getUserPreferenceValues(userId: string) {
         const prefs = await UserPreferenceValueModel.find({ userId: userId});
         return prefs;
+    }
+
+    //////////////////////////////////////////////////////////////////
+    //
+    // AppSettings Section
+    // 
+    // //////////////////////////////////////////////////////////////////
+    public async getAppSettings(): Promise<AppSettingsValue[]> {
+        const appSettings = await AppSettingModel.find({});
+        return appSettings;
     }
 
     //////////////////////////////////////////////////////////////////

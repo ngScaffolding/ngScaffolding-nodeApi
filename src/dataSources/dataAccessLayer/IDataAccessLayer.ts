@@ -6,9 +6,11 @@ import { IReferenceValueDataAccess } from './IReferenceValueDataAccess';
 import { IUserPreferenceDefinitionDataAccess } from './IUserPreferenceDefinitionDataAccess';
 import { IUserPreferenceValueDataAccess } from './IUserPreferenceValueDataAccess';
 import { IWidgetDataAccess } from './IWidgetDataAccess';
+import { IAppSettingsDataAccess } from './IAppSettingsDataAccess';
 
 export interface IDataAccessLayer
   extends IApplicationLogDataAccess,
+    IAppSettingsDataAccess,
     IDataSourceDataAccess,
     IErrorDataAccess,
     IMenuItemsDataAccess,

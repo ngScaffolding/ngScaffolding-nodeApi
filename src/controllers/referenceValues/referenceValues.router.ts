@@ -1,5 +1,4 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { MongoDBDataAccess } from '../../dataSources/mongodb/mongoDBDataAccess';
 import { Observable ,  forkJoin } from 'rxjs';
 import { ReferenceValue, BaseDataSource, ReferenceValueItem, RestApiDataSource } from '@ngscaffolding/models';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
@@ -10,7 +9,6 @@ var DataSourceSwitch = require('../../dataSourceSwitch');
 
 export class ReferenceValuesRouter {
   router: Router;
-  private dataAccess: MongoDBDataAccess;
 
   constructor() {
     this.router = Router();
