@@ -38,6 +38,16 @@ export class UserPreferenceValueRouter {
   
   public saveValue(req: Request, res: Response, next: NextFunction) {
     var userPreferenceValue = req.body as UserPreferenceValue;
+    let capRes: any = res;
+
+    let user = req['userDetails'] as BasicUser;
+    userPreferenceValue.userId = user.userId;
+
+    var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+
+    dataAccess.saveUserPreferenceValue(userPreferenceValue).subscribe(prefValues => {
+      capRes.json(prefValues);
+    });
 
   }
 

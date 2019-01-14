@@ -81,7 +81,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           results.entries.forEach(result => {
             const name = result.RowKey['_'];
             const entity = result.value['_'];
-            returnValues.push({ name: name, value: entity });
+            returnValues.push({ Id: null, name: name, value: entity });
           });
           observer.next(returnValues);
           observer.complete();
@@ -279,7 +279,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   }
   getUserPreferenceValues(userId: string): Observable<UserPreferenceValue[]> {
     var tableService = azure.createTableService();
-    var query = new azure.TableQuery().where('RowKey ge ?', 'userId');
+    var query = new azure.TableQuery().where('RowKey ge ?', userId);
 
     return new Observable<UserPreferenceValue[]>(observer => {
       tableService.queryEntities(`${this.tablePrefix}userpreferencevalues`, query, null, (error, results, response) => {
@@ -297,16 +297,23 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       });
     });
   }
-  saveUserPreferenceValue(userId: string, name: string, value: string): Observable<UserPreferenceValue> {
+  saveUserPreferenceValue(userPreference: UserPreferenceValue): Observable<UserPreferenceValue> {
     var tableService = azure.createTableService();
 
     return new Observable<UserPreferenceValue>(observer => {
       // Find if exists
-      this.getUserPreferenceValues(userId).subscribe(prefs => {
-        let existingPref = prefs.find(pref => pref.name.toLowerCase() === name.toLowerCase());
+      this.getUserPreferenceValues(userPreference.userId).subscribe(prefs => {
+        const searchKey = this.getUserPrefKey(userPreference.userId, userPreference.name)
+
+        let existingPref = prefs.find(pref => pref.name.toLowerCase() === userPreference.name.toLowerCase() && 
+          pref.userId.toLowerCase() === userPreference.userId.toLowerCase());
         if (existingPref) {
-          existingPref.value = value;
-          tableService.replaceEntity('userpreferencevalues', JSON.stringify(existingPref), function(error, result, response) {
+          var entity = {
+            PartitionKey: '',
+            RowKey: searchKey,
+            data: JSON.stringify(userPreference)
+          };
+          tableService.replaceEntity(`${this.tablePrefix}userpreferencevalues`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
               observer.next(existingPref);
@@ -317,13 +324,12 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           });
         } else {
           // Insert Time
-          let newPref: UserPreferenceValue = { Id: null, name: name, userId: userId, value: value };
           var entity = {
             PartitionKey: '',
-            RowKey: this.getUserPrefKey(userId, name),
-            data: JSON.stringify(newPref)
+            RowKey: this.getUserPrefKey(userPreference.userId, userPreference.name),
+            data: JSON.stringify(userPreference)
           };
-          tableService.insertEntity('userpreferencevalues', entity, function(error, result, response) {
+          tableService.insertEntity(`${this.tablePrefix}userpreferencevalues`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
               observer.next(existingPref);

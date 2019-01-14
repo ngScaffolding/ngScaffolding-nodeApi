@@ -100,7 +100,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   getUserPreferenceDefinitions(): Observable<UserPreferenceDefinition[]> {
     return from(DB.getUserPreferenceDefinitions());
   }
-  saveUserPreferenceValue(name: string, value: string): Observable<UserPreferenceValue> {
+  saveUserPreferenceValue(userPreference: UserPreferenceValue): Observable<UserPreferenceValue> {
     throw new Error('Method not implemented.');
   }
   deleteUserPreferenceValue(name: string): Observable<UserPreferenceValue> {
