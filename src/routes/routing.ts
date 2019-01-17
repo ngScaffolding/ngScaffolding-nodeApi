@@ -10,6 +10,7 @@ import UserPreferenceDefinitionRouter from '../controllers/userPreferenceDefinit
 import UserPreferenceValueRouter from '../controllers/userPreferenceValue/userPreferenceValue.router';
 
 import isUserInRole from '../auth/authoriseRoles';
+import WidgetsRouter from '../controllers/widgets/widgets.router';
 
 // import ActionRouter from '../controllers/action/action.router';
 // import * as swaggerUi from 'swagger-ui-express';
@@ -36,11 +37,8 @@ export class RouterSetup{
     this.express.use('/api/v1/action', isUserInRole('user'), ActionRouter);
     this.express.use('/api/v1/userpreferencedefinition', isUserInRole('user'), UserPreferenceDefinitionRouter);
     this.express.use('/api/v1/userpreferencevalue', isUserInRole('user'), UserPreferenceValueRouter);
+    this.express.use('/api/v1/widgets', isUserInRole('user'), WidgetsRouter);
     this.express.use('/api/v1/error', ErrorRouter);
-    
-    
-    // this.express.use('/api/v1/action', ActionRouter);
-
     
     }
 }
