@@ -10,6 +10,7 @@ export default async function authoriseRequest(req: Request, res: Response, next
 
     if(!apiToken){ 
         req['userDetails'] = null;
+        res.send(401);
         return;
      }
 
@@ -23,6 +24,7 @@ export default async function authoriseRequest(req: Request, res: Response, next
         var current_time = Date.now().valueOf();
         if (jwtDetails.exp < current_time) {
             req['userDetails'] = null;
+            res.send(401);
             return;
         }
         
@@ -35,6 +37,8 @@ export default async function authoriseRequest(req: Request, res: Response, next
     }
     catch (err) {
         req['userDetails'] = null;
+        res.send(401);
+        return;
     }
         
     next();
