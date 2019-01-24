@@ -1,5 +1,3 @@
-import { CoreMenuItem } from '@ngscaffolding/models';
-import { DataSourceRequest, DataSetResults } from '@ngscaffolding/models';
 import { Observable } from 'rxjs';
 import { BaseDataSource } from '@ngscaffolding/models';
 

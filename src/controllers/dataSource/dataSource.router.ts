@@ -31,6 +31,7 @@ export class DataSourceRouter {
 
             RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).subscribe(
               dataResults => {
+                dataResults.expiresSeconds = dataSouorce.expires;
                 capRes.json(dataResults);
               },
               err => {
@@ -54,6 +55,7 @@ export class DataSourceRouter {
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
             SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).subscribe(
               dataResults => {
+                dataResults.expiresSeconds = dataSouorce.expires;
                 capRes.json(dataResults);
               },
               err => {
@@ -68,6 +70,7 @@ export class DataSourceRouter {
 
             DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).subscribe(
               dataResults => {
+                dataResults.expiresSeconds = dataSouorce.expires;
                 capRes.json(dataResults);
               },
               err => {
@@ -83,6 +86,7 @@ export class DataSourceRouter {
             KumulosDataService.callFunction(kumulosDataSource.url, null, null).subscribe(
               dataResults => {
                 let returnResults: DataResults = {
+                  expiresSeconds: 0,
                   rowCount: 0,
                   jsonData: JSON.stringify(dataResults),
                   results: [{ success: true, message: '' }]

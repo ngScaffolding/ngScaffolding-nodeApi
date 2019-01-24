@@ -35,6 +35,7 @@ export class SQLCommandHandler {
 
         // Return value ready
         let dataResults: DataResults = {
+          expiresSeconds: 0,
           rowCount: 0,
           jsonData: '',
           results: [{ success: true, message: '' }]
