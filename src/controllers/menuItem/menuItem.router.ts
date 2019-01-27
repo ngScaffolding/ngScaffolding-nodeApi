@@ -98,14 +98,14 @@ export class MenuItemRouter {
     }
 
     public async addMenuItem(req: Request, res: Response, next: NextFunction) {
-        var MenuItem = {};
+        var userDetails = req['userDetails'] as BasicUser;
+        var dataAccess = DataSourceSwitch.default.dataSource;
 
-        for (const key in req.body) {
-            MenuItem[key] = req.body[key];
-        }
+        var MenuItem = req.body as CoreMenuItem;
 
-        // const newMenuItem = await DB.addMenuItem(MenuItem as IMenuItem);
-        // res.json(newMenuItem);
+        dataAccess.saveMenuItem(MenuItem as CoreMenuItem).subscribe(newMenuItem => { 
+            res.json(newMenuItem);
+        });       
     }
 
     init() {

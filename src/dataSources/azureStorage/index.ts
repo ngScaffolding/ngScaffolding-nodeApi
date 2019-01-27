@@ -1,3 +1,4 @@
+
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { Observable } from 'rxjs';
 import {
@@ -185,7 +186,8 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           observer.next(entity);
           observer.complete();
         } else {
-          observer.error();
+          observer.next(null);
+          observer.complete();
         }
       });
     });
@@ -211,11 +213,54 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
   saveMenuItem(menuItem: CoreMenuItem): Observable<CoreMenuItem> {
-    throw new Error('Method not implemented.');
+    var tableService = azure.createTableService();
+
+    return new Observable<CoreMenuItem>(observer => {
+      // Find if exists
+      this.getMenuItem(menuItem.name).subscribe(menu => {
+        if (menu) {
+          var entity = {
+            PartitionKey: '',
+            RowKey: menuItem.name,
+            data: JSON.stringify(menuItem)
+          };
+          tableService.replaceEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              observer.next(menuItem);
+              observer.complete();
+            } else {
+              observer.error(error);
+            }
+          });
+        } else {
+          // Insert Time
+          var entity = {
+            PartitionKey: '',
+            RowKey: menuItem.name,
+            data: JSON.stringify(menuItem)
+          };
+          tableService.insertEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              observer.next(menuItem);
+              observer.complete();
+            } else {
+              observer.error(error);
+            }
+          });
+        }
+      });
+    });
   }
   deleteMenuItem(name: string): Observable<any> {
     throw new Error('Method not implemented.');
   }
+  // //////////////////////////////////////////////////////////////////
+  //
+  // Reference Values Section
+  //
+  // //////////////////////////////////////////////////////////////////
   getReferenceValues(name: string, seed: string, group: string): Observable<ReferenceValue[]> {
     var tableService = azure.createTableService();
     var returnValues: ReferenceValue[] = [];
