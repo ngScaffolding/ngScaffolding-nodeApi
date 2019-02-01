@@ -26,6 +26,7 @@ export class DataSourceRouter {
     if (dataRequest) {
       ds.dataSource.getDataSource(dataRequest.name).subscribe(dataSouorce => {
         switch (dataSouorce.type) {
+          
           case BaseDataSource.TypesRestApi: {
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
 
