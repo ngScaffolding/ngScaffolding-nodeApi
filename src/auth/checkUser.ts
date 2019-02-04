@@ -1,10 +1,12 @@
-export function checkUser(userRoles: string | string[], allowedRoles: string | string[]): boolean {
+import { BasicUser, CoreMenuItem } from "@ngscaffolding/models";
+
+export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
 
     // This means that items with no allowedRoles - Everyone gets to play
-    if(!allowedRoles) return true;
+    if(!menu.roles) return true;
 
-    var checkUserRoles = [...userRoles];
-    var checkAllowedRoles = [...allowedRoles];
+    var checkUserRoles = [...user.roles];
+    var checkAllowedRoles = [...menu.roles];
 
     var isUserCool = false;
     checkUserRoles.forEach(checkUserRole => {
@@ -14,6 +16,14 @@ export function checkUser(userRoles: string | string[], allowedRoles: string | s
             }
         })
     });
+
+    if (menu.userIds) {
+        menu.userIds.forEach(allowedUser => {
+            if (allowedUser.toLowerCase() === user.userId.toLowerCase()) {
+                isUserCool = true;
+            }
+        });
+    }
 
     return isUserCool;
 
