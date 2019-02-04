@@ -254,7 +254,22 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
   deleteMenuItem(name: string): Observable<any> {
-    throw new Error('Method not implemented.');
+    return new Observable<CoreMenuItem>(observer => {
+      var tableService = azure.createTableService();
+      var entity = {
+        PartitionKey: '',
+        RowKey: name
+      };
+      tableService.deleteEntity(`${this.tablePrefix}menuitems`, entity, function (error, response) {
+        if (!error) {
+          // Entity deleted
+          observer.next();
+          observer.complete();
+        } else {
+          observer.error(error);
+        }
+      });
+    });
   }
   // //////////////////////////////////////////////////////////////////
   //
