@@ -51,7 +51,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
     return new Promise<Role[]>((resolve, reject) => {
-      tableService.queryEntities(`${this.tablePrefix}appsettings`, query, null, (error, results, response) => {
+      tableService.queryEntities(`${this.tablePrefix}roles`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: Role[] = [];
           results.entries.forEach(result => {

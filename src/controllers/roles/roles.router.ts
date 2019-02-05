@@ -7,7 +7,8 @@ import {
   DataResults,
   ActionResultModel,
   UserPreferenceValue,
-  BasicUser
+  BasicUser,
+  Role
 } from '@ngscaffolding/models';
 
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
@@ -16,40 +17,45 @@ const request = require('request');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
-export class UserRouter {
+export class RolesRouter {
   router: Router;
   constructor() {
     this.router = Router();
     this.init();
   }
 
-    public createUser(req: Request, res: Response, next: NextFunction) { }
-    public registerUser(req: Request, res: Response, next: NextFunction) { }
-    public confirmEmail(req: Request, res: Response, next: NextFunction) { }
-    public updateUser(req: Request, res: Response, next: NextFunction) { }
-    public setPassword(req: Request, res: Response, next: NextFunction) { }
-
-  public getUsers(req: Request, res: Response, next: NextFunction) {
+  public getRoles(req: Request, res: Response, next: NextFunction) {
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
+    var userDetails = req['userDetails'] as BasicUser;
+    const isAdmin = (userDetails.roles && userDetails.roles.some(role => role.toLowerCase() === "admin"));
     let capRes: any = res;
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    // dataAccess.getAppSettingsValues().then(defValues => {
-    //   capRes.json(defValues);
-    // });
+    ///
+    /// Only return roles that the user is a member of
+    const allRoles = dataAccess.getRoles().then(roles => {
+      const userRoles: Role[] = [];
+      roles.forEach(role => {
+        if (isAdmin || (userDetails.roles && userDetails.roles.some(loopRole => loopRole.toLowerCase() === role.name.toLowerCase()))) {
+          userRoles.push(role);
+        }
+      });
+
+      res.json(userRoles);
+    }).catch(err=>{
+      res.sendStatus(500);
+    });
   }
-  
+
   init() {
-      this.router.get('/', this.getUsers);
-      this.router.post('/create', this.createUser);
-      this.router.post('/register', this.createUser);
-      this.router.post('/confirm', this.confirmEmail);
-      this.router.post('/setpassword', this.setPassword);
-      this.router.post('/update', this.updateUser);
-    }
+    this.router.get('/', this.getRoles);
+    // this.router.post('/', this.createUser);
+    // this.router.patch('/', this.createUser);
+    // this.router.delete('/', this.confirmEmail);
+  }
 }
 
-const userRouter = new UserRouter().router;
+const rolesRouter = new RolesRouter().router;
 
-export default userRouter;
+export default rolesRouter;
