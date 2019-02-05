@@ -29,7 +29,7 @@ export class AppSettingsRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getAppSettingsValues().subscribe(defValues => {
+    dataAccess.getAppSettingsValues().then(defValues => {
       capRes.json(defValues);
     });
   }

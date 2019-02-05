@@ -1,9 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { Observable ,  forkJoin } from 'rxjs';
 import { ReferenceValue, BaseDataSource, ReferenceValueItem, RestApiDataSource } from '@ngscaffolding/models';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
-import { KumulosDataService } from '../../utils/kumulos.dataSource';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
@@ -22,11 +20,11 @@ export class ReferenceValuesRouter {
     let seed = req.query.seed;
     let group = req.query.group;
 
-    let arrRefValueGetters: Array<Observable<ReferenceValue>> = [];
+    let arrRefValueGetters: Array<Promise<ReferenceValue>> = [];
 
     ds.dataSource
       .getReferenceValues(name, seed, group)
-      .subscribe(refValues => {
+      .then(refValues => {
         // Now we have ref values
 
         if (refValues) {
@@ -49,7 +47,7 @@ export class ReferenceValuesRouter {
         }
 
         if (arrRefValueGetters.length > 0) {
-          forkJoin(arrRefValueGetters).subscribe(results => {
+          Promise.all(arrRefValueGetters).then(results => {
             if(results.length === 1){
               res.json(results[0]);
             }else {
@@ -67,7 +65,7 @@ export class ReferenceValuesRouter {
 
     ds.dataSource
       .addReferenceValue(req.body as ReferenceValue)
-      .subscribe(
+      .then(
         val => {
           res.json(val);
         },
@@ -75,8 +73,8 @@ export class ReferenceValuesRouter {
       );
   }
 
-  private static populateReferenceValue  (refValue: ReferenceValue, seed: string): Observable<ReferenceValue> {
-    return new Observable<ReferenceValue>(observer => {
+  private static populateReferenceValue  (refValue: ReferenceValue, seed: string): Promise<ReferenceValue> {
+    return new Promise<ReferenceValue>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
       // Data Comes from somewhere else
@@ -84,13 +82,13 @@ export class ReferenceValuesRouter {
         // Go Fetch
         ds.dataSource
           .getDataSource(refValue.dataSourceName)
-          .subscribe(dataSouorce => {
+          .then(dataSouorce => {
             switch (dataSouorce.type) {
               
               case BaseDataSource.TypesRestApi: {
                 RESTApiHandler.runCommand(refValue.dataSourceName, {
                   seed: seed
-                }).subscribe(dataResults => {
+                }).then(dataResults => {
                   let returnedItems: any[] = JSON.parse(dataResults.jsonData);
                   refValue.referenceValueItems = [];
                   let idCount = 0;
@@ -102,29 +100,7 @@ export class ReferenceValuesRouter {
                       subtitle: item[refValue.subtitleProperty]
                     });
                   });
-                  observer.next(refValue);
-                  observer.complete();
-                });
-
-                break;
-              }
-
-              case BaseDataSource.TypesKumulos: {
-                let kumulosDetails = dataSouorce.dataSourceDetails as RestApiDataSource;
-                KumulosDataService.callFunction(kumulosDetails.url,null,null)
-                .subscribe(dataResults => {
-                  refValue.referenceValueItems = [];
-                  let idCount = 0;
-                  dataResults.forEach(item => {
-                    refValue.referenceValueItems.push({
-                      value: item[refValue.valueProperty],
-                      display: item[refValue.displayProperty],
-                      itemOrder: item[refValue.itemOrderProperty],
-                      subtitle: item[refValue.subtitleProperty]
-                    });
-                  });
-                  observer.next(refValue);
-                  observer.complete();
+                  resolve(refValue);
                 });
 
                 break;
@@ -132,8 +108,7 @@ export class ReferenceValuesRouter {
             }
           });
       } else {
-        observer.next(refValue);
-        observer.complete();
+        resolve(refValue);
       }
     });
   }

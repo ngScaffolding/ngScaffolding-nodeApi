@@ -1,6 +1,4 @@
-
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { Observable } from 'rxjs';
 import {
   BaseDataSource,
   ApplicationLog,
@@ -10,7 +8,8 @@ import {
   ReferenceValue,
   UserPreferenceValue,
   WidgetModelBase,
-  AppSettingsValue
+  AppSettingsValue,
+  Role
 } from '@ngscaffolding/models';
 import { stringify } from 'querystring';
 
@@ -37,6 +36,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     tableService.createTableIfNotExists(`${this.tablePrefix}errors`, (error, result, response) => {});
     tableService.createTableIfNotExists(`${this.tablePrefix}menuitems`, (error, result, response) => {});
     tableService.createTableIfNotExists(`${this.tablePrefix}referencevalues`, (error, result, response) => {});
+    tableService.createTableIfNotExists(`${this.tablePrefix}roles`, (error, result, response) => {});
     tableService.createTableIfNotExists(`${this.tablePrefix}userpreferencedefinitions`, (error, result, response) => {});
     tableService.createTableIfNotExists(`${this.tablePrefix}userpreferencevalues`, (error, result, response) => {});
     tableService.createTableIfNotExists(`${this.tablePrefix}widgets`, (error, result, response) => {});
@@ -44,10 +44,89 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
 
   // //////////////////////////////////////////////////////////////////
   //
+  // Roles Section
+  //
+  // //////////////////////////////////////////////////////////////////
+  getRoles(): Promise<Role[]> {
+    var tableService = azure.createTableService();
+    var query = new azure.TableQuery().where('PartitionKey eq ?', '');
+    return new Promise<Role[]>((resolve, reject) => {
+      tableService.queryEntities(`${this.tablePrefix}appsettings`, query, null, (error, results, response) => {
+        if (!error) {
+          let returnValues: Role[] = [];
+          results.entries.forEach(result => {
+            const entity = JSON.parse(result.data['_']);
+            returnValues.push(entity);
+          });
+          resolve(returnValues);
+        } else {
+          reject(error);
+        }
+      });
+    });
+  }
+  deleteRole(name: string): Promise<null> {
+    var tableService = azure.createTableService();
+    var entity = {
+      PartitionKey: '',
+      RowKey: name
+    };
+
+    return new Promise<null>((resolve, reject) => {
+      tableService.deleteEntity(`${this.tablePrefix}roles`, entity, function(error, response) {
+        if (!error) {
+          resolve();
+        } else {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  addRole(role: Role): Promise<null> {
+    var tableService = azure.createTableService();
+
+    var entity = {
+      PartitionKey: '',
+      RowKey: role.name,
+      data: JSON.stringify(role)
+    };
+
+    return new Promise<null>((resolve, reject) => {
+      tableService.insertEntity(`${this.tablePrefix}roles`, entity, function(error, result, response) {
+        if (!error) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
+  updateRole(role: Role): Promise<null> {var tableService = azure.createTableService();
+
+    var entity = {
+      PartitionKey: '',
+      RowKey: role.name,
+      data: JSON.stringify(role)
+    };
+
+    return new Promise<null>((resolve, reject) => {
+      tableService.replaceEntity(`${this.tablePrefix}roles`, entity, function(error, result, response) {
+        if (!error) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+    });}
+
+  // //////////////////////////////////////////////////////////////////
+  //
   // Application Log Section
   //
   // //////////////////////////////////////////////////////////////////
-  saveApplicationLog(applicationLog: ApplicationLog): Observable<ApplicationLog> {
+  saveApplicationLog(applicationLog: ApplicationLog): Promise<ApplicationLog> {
     var tableService = azure.createTableService();
     var entity = {
       PartitionKey: '',
@@ -55,12 +134,12 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       data: JSON.stringify(applicationLog)
     };
 
-    return new Observable<ApplicationLog>(observer => {
+    return new Promise<ApplicationLog>((resolve, reject) => {
       tableService.insertEntity(`${this.tablePrefix}applicationlogs`, entity, (error, result, response) => {
         if (!error) {
-          observer.next(result);
-          observer.complete();
+          resolve(result);
         } else {
+          reject();
         }
       });
     });
@@ -71,11 +150,11 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // AppSettings Secion
   //
   // //////////////////////////////////////////////////////////////////
-  getAppSettingsValues(): Observable<AppSettingsValue[]> {
+  getAppSettingsValues(): Promise<AppSettingsValue[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
 
-    return new Observable<AppSettingsValue[]>(observer => {
+    return new Promise<AppSettingsValue[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}appsettings`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: AppSettingsValue[] = [];
@@ -84,10 +163,9 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             const entity = result.value['_'];
             returnValues.push({ Id: null, name: name, value: entity });
           });
-          observer.next(returnValues);
-          observer.complete();
+          resolve(returnValues);
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
@@ -98,17 +176,17 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // Data Source Section
   //
   // //////////////////////////////////////////////////////////////////
-  getDataSource(name: string): Observable<BaseDataSource> {
+  getDataSource(name: string): Promise<BaseDataSource> {
     var tableService = azure.createTableService();
 
-    return new Observable<BaseDataSource>(observer => {
+    return new Promise<BaseDataSource>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}datasources`, '', name, (error, result, response) => {
         if (!error) {
           const entity = JSON.parse(result.data['_']);
-          observer.next(entity);
-          observer.complete();
+          resolve(entity);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
@@ -119,11 +197,11 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // Widget Section
   //
   // //////////////////////////////////////////////////////////////////
-  getAllWidgets(): Observable<WidgetModelBase[]> {
+  getAllWidgets(): Promise<WidgetModelBase[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
 
-    return new Observable<WidgetModelBase[]>(observer => {
+    return new Promise<WidgetModelBase[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}widgets`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: WidgetModelBase[] = [];
@@ -131,26 +209,26 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             const entity = JSON.parse(result.data['_']);
             returnValues.push(entity);
           });
-          observer.next(returnValues);
-          observer.complete();
+          resolve(returnValues);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
   }
 
-  getWidget(name: string): Observable<WidgetModelBase> {
+  getWidget(name: string): Promise<WidgetModelBase> {
     var tableService = azure.createTableService();
 
-    return new Observable<WidgetModelBase>(observer => {
+    return new Promise<WidgetModelBase>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}widgets`, '', name, (error, result, response) => {
         if (!error) {
           const entity = JSON.parse(result.data['_']);
-          observer.next(entity);
-          observer.complete();
+          resolve(entity);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
@@ -176,27 +254,27 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // MenuItems Section
   //
   // //////////////////////////////////////////////////////////////////
-  getMenuItem(name: string): Observable<CoreMenuItem> {
+  getMenuItem(name: string): Promise<CoreMenuItem> {
     var tableService = azure.createTableService();
 
-    return new Observable<CoreMenuItem>(observer => {
+    return new Promise<CoreMenuItem>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}menuitems`, '', name, (error, result, response) => {
         if (!error) {
           const entity = JSON.parse(result.data['_']);
-          observer.next(entity);
-          observer.complete();
+          resolve(entity);
+          
         } else {
-          observer.next(null);
-          observer.complete();
+          resolve(null);
+          
         }
       });
     });
   }
-  getMenuItems(): Observable<CoreMenuItem[]> {
+  getMenuItems(): Promise<CoreMenuItem[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
 
-    return new Observable<CoreMenuItem[]>(observer => {
+    return new Promise<CoreMenuItem[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}menuitems`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: CoreMenuItem[] = [];
@@ -204,20 +282,20 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             const entity = JSON.parse(result.data['_']);
             returnValues.push(entity);
           });
-          observer.next(returnValues);
-          observer.complete();
+          resolve(returnValues);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
   }
-  saveMenuItem(menuItem: CoreMenuItem): Observable<CoreMenuItem> {
+  saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
     var tableService = azure.createTableService();
 
-    return new Observable<CoreMenuItem>(observer => {
+    return new Promise<CoreMenuItem>((resolve, reject) => {
       // Find if exists
-      this.getMenuItem(menuItem.name).subscribe(menu => {
+      this.getMenuItem(menuItem.name).then(menu => {
         if (menu) {
           var entity = {
             PartitionKey: '',
@@ -227,10 +305,10 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           tableService.replaceEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              observer.next(menuItem);
-              observer.complete();
+              resolve(menuItem);
+              
             } else {
-              observer.error(error);
+              reject(error);
             }
           });
         } else {
@@ -243,30 +321,30 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           tableService.insertEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              observer.next(menuItem);
-              observer.complete();
+              resolve(menuItem);
+              
             } else {
-              observer.error(error);
+              reject(error);
             }
           });
         }
       });
     });
   }
-  deleteMenuItem(name: string): Observable<any> {
-    return new Observable<CoreMenuItem>(observer => {
+  deleteMenuItem(name: string): Promise<any> {
+    return new Promise<CoreMenuItem>((resolve, reject) => {
       var tableService = azure.createTableService();
       var entity = {
         PartitionKey: '',
         RowKey: name
       };
-      tableService.deleteEntity(`${this.tablePrefix}menuitems`, entity, function (error, response) {
+      tableService.deleteEntity(`${this.tablePrefix}menuitems`, entity, function(error, response) {
         if (!error) {
           // Entity deleted
-          observer.next();
-          observer.complete();
+          resolve();
+          
         } else {
-          observer.error(error);
+          reject(error);
         }
       });
     });
@@ -276,11 +354,11 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // Reference Values Section
   //
   // //////////////////////////////////////////////////////////////////
-  getReferenceValues(name: string, seed: string, group: string): Observable<ReferenceValue[]> {
+  getReferenceValues(name: string, seed: string, group: string): Promise<ReferenceValue[]> {
     var tableService = azure.createTableService();
     var returnValues: ReferenceValue[] = [];
 
-    return new Observable<ReferenceValue[]>(observer => {
+    return new Promise<ReferenceValue[]>((resolve, reject) => {
       if (group) {
         var query = new azure.TableQuery().where('PartitionKey eq ?', '');
 
@@ -292,36 +370,36 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
                 returnValues.push(entity);
               }
             });
-            observer.next(returnValues);
-            observer.complete();
+            resolve(returnValues);
+            
           } else {
-            observer.error();
+            reject(error);
           }
         });
       } else if (seed) {
-        observer.error('Not Implemented');
+        reject('Not Implemented');
       } else {
         // Just get by name
         tableService.retrieveEntity(`${this.tablePrefix}referencevalues`, '', name, (error, result, response) => {
           if (!error) {
             const entity = JSON.parse(result.data['_']);
-            observer.next(entity);
-            observer.complete();
+            resolve(entity);
+            
           } else {
-            observer.error();
+            reject(error);
           }
         });
       }
     });
   }
-  addReferenceValue(referenceValue: ReferenceValue): Observable<ReferenceValue> {
+  addReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
     throw new Error('Method not implemented.');
   }
-  getUserPreferenceDefinitions(): Observable<UserPreferenceDefinition[]> {
+  getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
 
-    return new Observable<UserPreferenceDefinition[]>(observer => {
+    return new Promise<UserPreferenceDefinition[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}userpreferencedefinitions`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: UserPreferenceDefinition[] = [];
@@ -329,19 +407,19 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             const entity = JSON.parse(result.data['_']);
             returnValues.push(entity);
           });
-          observer.next(returnValues);
-          observer.complete();
+          resolve(returnValues);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
   }
-  getUserPreferenceValues(userId: string): Observable<UserPreferenceValue[]> {
+  getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('RowKey ge ?', userId);
 
-    return new Observable<UserPreferenceValue[]>(observer => {
+    return new Promise<UserPreferenceValue[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}userpreferencevalues`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: UserPreferenceValue[] = [];
@@ -349,24 +427,25 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             const entity: UserPreferenceValue = JSON.parse(result.data['_']);
             returnValues.push(entity);
           });
-          observer.next(returnValues);
-          observer.complete();
+          resolve(returnValues);
+          
         } else {
-          observer.error();
+          reject(error);
         }
       });
     });
   }
-  saveUserPreferenceValue(userPreference: UserPreferenceValue): Observable<UserPreferenceValue> {
+  saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
     var tableService = azure.createTableService();
 
-    return new Observable<UserPreferenceValue>(observer => {
+    return new Promise<UserPreferenceValue>((resolve, reject) => {
       // Find if exists
-      this.getUserPreferenceValues(userPreference.userId).subscribe(prefs => {
-        const searchKey = this.getUserPrefKey(userPreference.userId, userPreference.name)
+      this.getUserPreferenceValues(userPreference.userId).then(prefs => {
+        const searchKey = this.getUserPrefKey(userPreference.userId, userPreference.name);
 
-        let existingPref = prefs.find(pref => pref.name.toLowerCase() === userPreference.name.toLowerCase() && 
-          pref.userId.toLowerCase() === userPreference.userId.toLowerCase());
+        let existingPref = prefs.find(
+          pref => pref.name.toLowerCase() === userPreference.name.toLowerCase() && pref.userId.toLowerCase() === userPreference.userId.toLowerCase()
+        );
         if (existingPref) {
           var entity = {
             PartitionKey: '',
@@ -376,10 +455,10 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           tableService.replaceEntity(`${this.tablePrefix}userpreferencevalues`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              observer.next(existingPref);
-              observer.complete();
+              resolve(existingPref);
+              
             } else {
-              observer.error(error);
+              reject(error);
             }
           });
         } else {
@@ -392,10 +471,10 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           tableService.insertEntity(`${this.tablePrefix}userpreferencevalues`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              observer.next(existingPref);
-              observer.complete();
+              resolve(existingPref);
+              
             } else {
-              observer.error(error);
+              reject(error);
             }
           });
         }
@@ -407,7 +486,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return `${userId}::${name}`;
   }
 
-  deleteUserPreferenceValue(userId: any, string: any, name: string): Observable<any> {
+  deleteUserPreferenceValue(userId: any, string: any, name: string): Promise<any> {
     throw new Error('Method not implemented.');
   }
 }

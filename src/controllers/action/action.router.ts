@@ -10,7 +10,6 @@ import {
 } from '@ngscaffolding/models';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
-import { KumulosDataService } from '../../utils/kumulos.dataSource';
 
 const request = require('request');
 
@@ -33,7 +32,7 @@ export class ActionRouter {
     switch(actionRequest.action.type.toLowerCase()){
 
         case 'restapi': {
-            RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows).subscribe(
+            RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows).then(
                 dataResults =>{ 
                   res.json({success: true });
                 },
@@ -41,9 +40,6 @@ export class ActionRouter {
             )
 
             break;
-        }
-        case 'kumulos': {
-          break;
         }
     }
 

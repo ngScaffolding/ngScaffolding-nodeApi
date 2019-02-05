@@ -29,9 +29,6 @@ class DataSourceSwitch {
                 // this.dataSource = new DocumentDBDataAccess();
                 break;
             }
-            case 'kumulos':{
-                
-            }
         }
     }
 

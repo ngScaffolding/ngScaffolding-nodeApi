@@ -1,5 +1,4 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { Observable, forkJoin } from 'rxjs';
 import { RestApiDataSource, DataResults, NameValuePair } from '@ngscaffolding/models';
 import { DataSourceHelper } from './dataSource.helper';
 import { Options } from 'request';
@@ -11,13 +10,13 @@ const request = require('request');
 require('request-to-curl');
 
 export class RESTApiHandler {
-  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}]): Observable<any> {
-    return new Observable<any>(observer => {
+  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
       // Get dataSource
-      ds.dataSource.getDataSource(dataSourceName).subscribe(dataSouorce => {
-        let obsCollection: Array<Observable<any>> = [];
+      ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
+        let obsCollection: Array<Promise<any>> = [];
 
         let apiDataSource = dataSouorce.dataSourceDetails as RestApiDataSource;
 
@@ -97,29 +96,27 @@ export class RESTApiHandler {
           }
 
           obsCollection.push(
-            new Observable<any>(collectionObserver => {
+            new Promise<any>((collResolve, colReject) => {
               request(options, (err, res, body) => {
                 let reqVal = res.request.req.toCurl();
                 if (err) {
-                  collectionObserver.error(err);
+                  colReject(err);
                 } else if (res.statusCode < 200 || res.statusCode > 299) {
-                  collectionObserver.error(`RESTApi Failed: StatusCode ${res.statusCode}`);
+                  colReject(`RESTApi Failed: StatusCode ${res.statusCode}`);
                 } else {
                   dataResults.jsonData = body;
-                  collectionObserver.next(dataResults);
-                  collectionObserver.complete();
+                  collResolve(dataResults);
                 }
               });
             })
           );
 
-          forkJoin(obsCollection).subscribe(
+          Promise.all(obsCollection).then(
             results => {
-              observer.next(results[0]);
-              observer.complete();
+              resolve(results[0]);
             },
             err => {
-              observer.error(err);
+              reject(err);
             }
           );
         });

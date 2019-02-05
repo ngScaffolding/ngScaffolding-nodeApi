@@ -1,5 +1,4 @@
 
-import { Observable, from } from 'rxjs';
 import { IDataAccessLayer } from '../dataAccessLayer';
 import {
   ApplicationLog,
@@ -10,7 +9,8 @@ import {
   UserPreferenceDefinition,
   UserPreferenceValue,
   WidgetModelBase,
-  AppSettingsValue
+  AppSettingsValue,
+  Role
 } from '@ngscaffolding/models';
 import { DB } from './database.mongodb';
 import { IApplicationLog } from './models/applicationLog.model';
@@ -19,95 +19,115 @@ import { IReferenceValue } from './models/referenceValue.model';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
   // Application Log
-  public saveApplicationLog(applictionLog: ApplicationLog): Observable<ApplicationLog> {
-    return new Observable<ApplicationLog>(observer => {
+  public saveApplicationLog(applictionLog: ApplicationLog): Promise<ApplicationLog> {
+    return new Promise<ApplicationLog>((resolve, reject) => {
       DB.addApplicationLog(applictionLog as IApplicationLog)
         .then(log => {
-          observer.next(log);
-          observer.complete();
+          resolve(log);
         })
         .catch((err: Error) => {
-          observer.error(err);
-          observer.complete();
+          reject(err);
         });
     });
   }
 
-  // AppSettings
-  public getAppSettingsValues(): Observable<AppSettingsValue[]>{
-    return from(DB.getAppSettings());
+  // //////////////////////////////////////////////////////////////////
+  //
+  // Roles Section
+  //
+  // //////////////////////////////////////////////////////////////////
+  getRoles(): Promise<Role[]> {
+    return DB.getRoles();
+  }
+  deleteRole(name: string): Promise<null> {
+    return DB.deleteRole(name);
+  }
+
+  addRole(role: Role): Promise<null> {
+    return DB.addRole(role);
+  }
+
+  updateRole(role: Role): Promise<null> {
+    return DB.updateRole(role);
+  }
+
+  // //////////////////////////////////////////////////////////////////
+  //
+  // AppSettings  
+  //
+  // //////////////////////////////////////////////////////////////////
+  public getAppSettingsValues(): Promise<AppSettingsValue[]>{
+    return DB.getAppSettings();
   }
 
   // Widget
-  getWidget(name: string): Observable<WidgetModelBase> {
-      return from(DB.getWidget(name));
+  getWidget(name: string): Promise<WidgetModelBase> {
+      return DB.getWidget(name);
   }
-  getAllWidgets(): Observable<WidgetModelBase[]> {
-    return from(DB.getAllWidgets())
+  getAllWidgets(): Promise<WidgetModelBase[]> {
+    return DB.getAllWidgets()
   }
 
   // DataSource
-  getDataSource(name: string): Observable<BaseDataSource> {
-    return from(DB.getDataSource(name));
+  getDataSource(name: string): Promise<BaseDataSource> {
+    return DB.getDataSource(name);
   }
 
   // Error
-  public saveError(error: ErrorModel): Observable<ErrorModel> {
-    return from(DB.addError(error as IError));
+  public saveError(error: ErrorModel): Promise<ErrorModel> {
+    return DB.addError(error as IError);
   }
 
   // Menu Items
-  getMenuItem(name: string): Observable<CoreMenuItem> {
+  getMenuItem(name: string): Promise<CoreMenuItem> {
     throw new Error('Method not implemented.');
   }
 
-  getMenuItems(): Observable<CoreMenuItem[]> {
-    return from(DB.getMenuItems());
+  getMenuItems(): Promise<CoreMenuItem[]> {
+    return DB.getMenuItems();
   }
-  saveMenuItem(menuItem: CoreMenuItem): Observable<CoreMenuItem> {
+  saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
     throw new Error('Method not implemented.');
   }
-  deleteMenuItem(name: string): Observable<any> {
+  deleteMenuItem(name: string): Promise<any> {
     throw new Error('Method not implemented.');
   }
 
   // Reference Values
-  public getReferenceValues(name: string, seed: string, group: string): Observable<ReferenceValue[]> {
+  public getReferenceValues(name: string, seed: string, group: string): Promise<ReferenceValue[]> {
     if (group) {
-      return from(DB.getReferenceValuesForGroup(group));
+      return DB.getReferenceValuesForGroup(group);
     } else if (seed) {
-      return from(DB.getReferenceValuesByName(name));
+      return DB.getReferenceValuesByName(name);
     } else {
-      return from(DB.getReferenceValuesByName(name));
+      return DB.getReferenceValuesByName(name);
     }
   }
 
-  public addReferenceValue(referenceValue: ReferenceValue): Observable<ReferenceValue> {
-    return new Observable<ReferenceValue>(observer => {
+  public addReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
+    return new Promise<ReferenceValue>((resolve, reject) => {
       DB.addReferenceValue(referenceValue as IReferenceValue)
         .then(log => {
-          observer.next(log);
-          observer.complete();
+          resolve(log);
         })
         .catch((err: Error) => {
-          observer.error(err);
-          observer.complete();
+          reject(err);
         });
     });
   }
 
   // User Prefs
-  getUserPreferenceDefinitions(): Observable<UserPreferenceDefinition[]> {
-    return from(DB.getUserPreferenceDefinitions());
+  getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
+    return DB.getUserPreferenceDefinitions();
   }
-  saveUserPreferenceValue(userPreference: UserPreferenceValue): Observable<UserPreferenceValue> {
+  saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
     throw new Error('Method not implemented.');
   }
-  deleteUserPreferenceValue(name: string): Observable<UserPreferenceValue> {
+  deleteUserPreferenceValue(name: string): Promise<UserPreferenceValue> {
     throw new Error('Method not implemented.');
   }
-  getUserPreferenceValues(userId: string): Observable<UserPreferenceValue[]> {
+  getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     
-    return from(DB.getUserPreferenceValues(userId));
+    return DB.getUserPreferenceValues(userId);
   }
 }

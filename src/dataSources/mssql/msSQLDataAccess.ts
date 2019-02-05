@@ -1,6 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
 import { ApplicationLog, BaseDataSource, ErrorModel, CoreMenuItem, ReferenceValue, UserPreferenceDefinition, UserPreferenceValue } from '@ngscaffolding/models';
-import { Observable } from 'rxjs';
 import { IApplicationLog } from '../mongodb/models/applicationLog.model';
 import { IError } from '../mongodb/models/error.model';
 import { IReferenceValue } from '../mongodb/models/referenceValue.model';

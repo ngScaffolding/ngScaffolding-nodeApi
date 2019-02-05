@@ -1,17 +1,16 @@
-import { Observable } from 'rxjs';
 import { DocumentDBClient, databaseLink } from 'documentdb';
 
 export class DocumentDBUtils {
-  executeQuery(client: DocumentDBClient, databaseName: string, collectionName: string, query: string): Observable<any[]> {
-    return new Observable<any[]>(observer => {
-      this.getOrCreateDatabase(client, databaseName).subscribe(dataBase=>{
-        this.getOrCreateCollection(client, dataBase._self, collectionName).subscribe(collection => {
+  executeQuery(client: DocumentDBClient, databaseName: string, collectionName: string, query: string): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      this.getOrCreateDatabase(client, databaseName).then(dataBase=>{
+        this.getOrCreateCollection(client, dataBase._self, collectionName).then(collection => {
             client.queryDocuments(collection._self,{}).toArray((err, results) => {
                 if(err) {
-                    observer.error(err);
+                    reject(err);
                 } else {
-                    observer.next(results);
-                    observer.complete();
+                    resolve(results);
+                    
                 }
             });
         });
@@ -19,8 +18,8 @@ export class DocumentDBUtils {
     });
   }
 
-  getOrCreateDatabase(client: DocumentDBClient, databaseName: string): Observable<any> {
-    return new Observable<any>(observer => {
+  getOrCreateDatabase(client: DocumentDBClient, databaseName: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       var querySpec = {
         query: 'SELECT * FROM root r WHERE r.id= @id',
         parameters: [
@@ -33,7 +32,7 @@ export class DocumentDBUtils {
 
       client.queryDatabases(querySpec).toArray(function(err, results) {
         if (err) {
-          observer.error(err);
+          reject(err);
         } else {
           if (results.length === 0) {
             var databaseSpec = {
@@ -42,23 +41,23 @@ export class DocumentDBUtils {
 
             client.createDatabase(databaseSpec, function(err, created) {
               if (err) {
-                observer.error(err);
+                reject(err);
               } else {
-                observer.next(created);
-                observer.complete();
+                resolve(created);
+                
               }
             });
           } else {
-            observer.next(results[0]);
-            observer.complete();
+            resolve(results[0]);
+            
           }
         }
       });
     });
   }
 
-  getOrCreateCollection(client, databaseLink, collectionId): Observable<any> {
-      return new Observable<any>(observer=>{
+  getOrCreateCollection(client, databaseLink, collectionId): Promise<any> {
+      return new Promise<any>((resolve, reject)=>{
         var querySpec = {
             query: 'SELECT * FROM root r WHERE r.id=@id',
             parameters: [
@@ -71,7 +70,7 @@ export class DocumentDBUtils {
       
           client.queryCollections(databaseLink, querySpec).toArray(function(err, results) {
             if (err) {
-              observer.error(err);
+              reject(err);
             } else {
               if (results.length === 0) {
                 var collectionSpec = {
@@ -79,12 +78,12 @@ export class DocumentDBUtils {
                 };
       
                 client.createCollection(databaseLink, collectionSpec, function(err, created) {
-                  observer.next(created);
-                  observer.complete();
+                  resolve(created);
+                  
                 });
               } else {
-                observer.next(results[0]);
-                observer.complete();
+                resolve(results[0]);
+                
               }
             }
           });

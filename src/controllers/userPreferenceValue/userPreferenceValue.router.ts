@@ -31,7 +31,7 @@ export class UserPreferenceValueRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getUserPreferenceValues(user.userId).subscribe(defValues => {
+    dataAccess.getUserPreferenceValues(user.userId).then(defValues => {
       capRes.json(defValues);
     });
   }
@@ -45,7 +45,7 @@ export class UserPreferenceValueRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.saveUserPreferenceValue(userPreferenceValue).subscribe(prefValues => {
+    dataAccess.saveUserPreferenceValue(userPreferenceValue).then(prefValues => {
       capRes.json(prefValues);
     });
 

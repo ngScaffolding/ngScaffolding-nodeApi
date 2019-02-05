@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { ErrorModel } from '@ngscaffolding/models'
 
 export interface IErrorDataAccess {

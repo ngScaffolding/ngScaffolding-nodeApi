@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { CoreMenuItem, BasicUser, DashboardModel } from '@ngscaffolding/models';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import { checkUser } from '../../auth/checkUser';
-import { forkJoin } from 'rxjs';
 
 const winston = require('../../config/winston');
 
@@ -24,7 +23,7 @@ export class MenuItemRouter {
       var userDetails = req['userDetails'] as BasicUser;
       var dataAccess = DataSourceSwitch.default.dataSource;
 
-      forkJoin([dataAccess.getMenuItems(), dataAccess.getAllWidgets()]).subscribe(
+      Promise.all([dataAccess.getMenuItems(), dataAccess.getAllWidgets()]).then(
         resultsCol => {
           let allMenuItems = resultsCol[0];
 
@@ -102,7 +101,7 @@ export class MenuItemRouter {
 
     const name = req.params.name;
     if (name.startsWith(userDetails.userId)) {
-      dataAccess.deleteMenuItem(name).subscribe(
+      dataAccess.deleteMenuItem(name).then(
         () => {
           res.json('Deleted');
         },
@@ -130,7 +129,7 @@ export class MenuItemRouter {
 
     var MenuItem = req.body as CoreMenuItem;
 
-    dataAccess.saveMenuItem(MenuItem as CoreMenuItem).subscribe(newMenuItem => {
+    dataAccess.saveMenuItem(MenuItem as CoreMenuItem).then(newMenuItem => {
       res.json(newMenuItem);
     });
   }

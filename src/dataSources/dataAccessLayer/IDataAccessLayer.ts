@@ -3,6 +3,7 @@ import { IDataSourceDataAccess } from './IDataSourceDataAccess';
 import { IErrorDataAccess } from './IErrorDataAccess';
 import { IMenuItemsDataAccess } from './IMenuItemsDataAccess';
 import { IReferenceValueDataAccess } from './IReferenceValueDataAccess';
+import { IRolesDataAccess } from './IRolesDataAccess';
 import { IUserPreferenceDefinitionDataAccess } from './IUserPreferenceDefinitionDataAccess';
 import { IUserPreferenceValueDataAccess } from './IUserPreferenceValueDataAccess';
 import { IWidgetDataAccess } from './IWidgetDataAccess';
@@ -15,6 +16,7 @@ export interface IDataAccessLayer
     IErrorDataAccess,
     IMenuItemsDataAccess,
     IReferenceValueDataAccess,
+    IRolesDataAccess,
     IUserPreferenceDefinitionDataAccess,
     IUserPreferenceValueDataAccess,
     IWidgetDataAccess {}

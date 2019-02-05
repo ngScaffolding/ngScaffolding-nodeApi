@@ -30,7 +30,7 @@ export class WidgetsRouter {
     var userPreferenceDefinition = req.body as UserPreferenceDefinition;
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getAllWidgets().subscribe(widgets => {
+    dataAccess.getAllWidgets().then(widgets => {
       capRes.json(widgets);
     });
   }

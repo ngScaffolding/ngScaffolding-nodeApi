@@ -30,7 +30,7 @@ export class UserPreferenceDefinitionRouter {
     var userPreferenceDefinition = req.body as UserPreferenceDefinition;
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getUserPreferenceDefinitions().subscribe(defValues => {
+    dataAccess.getUserPreferenceDefinitions().then(defValues => {
       capRes.json(defValues);
     });
   }

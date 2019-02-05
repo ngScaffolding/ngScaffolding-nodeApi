@@ -16,7 +16,7 @@ export class ApplicationLogRouter {
     let ds = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
     ds.saveApplicationLog(req.body)
-      .subscribe(res => {
+      .then(res => {
 
       });
     

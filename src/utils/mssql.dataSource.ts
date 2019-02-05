@@ -1,5 +1,4 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { Observable ,  forkJoin } from 'rxjs';
 import {
   SqlDataSource,
   DataResults,
@@ -15,13 +14,13 @@ var DataSourceSwitch = require('../dataSourceSwitch');
 const sql = require('mssql');
 
 export class SQLCommandHandler {
-  public static runCommand(dataSourceName: string|string[], inputDetails: any = undefined, rows: any[] = [{}]): Observable<any> {
-    return new Observable<any>(observer => {
+  public static runCommand(dataSourceName: string|string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
       // Get dataSource
-      ds.dataSource.getDataSource(dataSourceName).subscribe(dataSouorce => {
-        let obsCollection: Array<Observable<any>> = [];
+      ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
+        let obsCollection: Array<Promise<any>> = [];
 
         let sqlDataSource = dataSouorce.dataSourceDetails as SqlDataSource;
 
@@ -53,7 +52,7 @@ export class SQLCommandHandler {
           // TODO: Support for Paging
 
           obsCollection.push(
-            new Observable<any>(collectionObserver => {
+            new Promise<any>((colResolve, colReject) => {
 
                 new sql.ConnectionPool(connString).connect().then(pool => {
                     return pool.query(replacedCommand);
@@ -61,23 +60,21 @@ export class SQLCommandHandler {
                     dataResults.rowCount = result.recordset.length;
                     dataResults.jsonData = JSON.stringify(result.recordset);
 
-                    collectionObserver.next(dataResults);
-                    collectionObserver.complete();
+                    colResolve(dataResults);
                 }).catch(err => {
-                    collectionObserver.error(
+                  colReject(
                         `SqlCommand Failed: Message ${err.message}`
                       );
                 })
               }));
         });
 
-        forkJoin(obsCollection).subscribe(
+        Promise.all(obsCollection).then(
           results => {
-            observer.next(results[0]);
-            observer.complete();
+            resolve(results[0]);
           },
           err => {
-            observer.error(err);
+            reject(err);
           }
         );
       });

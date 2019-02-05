@@ -33,7 +33,7 @@
     "typescript": "^2.8.3"
   },
   "dependencies": {
-    "@ngscaffolding/models": "^1.0.101",
+    "@ngscaffolding/models": "^1.0.103",
     "@types/mssql": "^4.0.10",
     "@types/request": "^2.47.1",
     "app-root-path": "^2.1.0",
@@ -55,7 +55,6 @@
     "mssql": "^4.2.1",
     "request": "^2.88.0",
     "request-to-curl": "^0.1.1",
-    "rxjs": "6.2.2",
     "swagger-ui-express": "^3.0.10",
     "tsc-watch": "^1.0.21",
     "typescript": "^2.8.3",

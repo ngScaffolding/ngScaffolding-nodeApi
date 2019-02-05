@@ -1,5 +1,4 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { Observable ,  forkJoin } from 'rxjs';
 import { DocumentDBDataSource, DataResults } from '@ngscaffolding/models';
 import { DataSourceHelper } from './dataSource.helper';
 import { DocumentDBUtils } from './documentDB.utils';
@@ -11,13 +10,13 @@ var DocumentDBClient = require("documentdb").DocumentClient;
 
 
 export class DocumentDBCommandHandler {
-  public static runCommand(dataSourceName: string|string[], inputDetails: any = undefined, rows: any[] = [{}]): Observable<any> {
-    return new Observable<any>(observer => {
+  public static runCommand(dataSourceName: string|string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
+    return new Promise<any>((resolve, reject) =>{
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
       // Get dataSource
-      ds.dataSource.getDataSource(dataSourceName).subscribe(dataSouorce => {
-        let obsCollection: Array<Observable<any>> = [];
+      ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
+        let obsCollection: Array<Promise<any>> = [];
 
         let docDBSource = dataSouorce.dataSourceDetails as DocumentDBDataSource;
 
@@ -63,13 +62,12 @@ export class DocumentDBCommandHandler {
           );
         });
 
-        forkJoin(obsCollection).subscribe(
+        Promise.all(obsCollection).then(
           results => {
-            observer.next(results[0]);
-            observer.complete();
+            resolve(results[0]);
           },
           err => {
-            observer.error(err);
+            reject(err);
           }
         );
       });
