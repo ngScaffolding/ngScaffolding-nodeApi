@@ -486,7 +486,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return `${userId}::${name}`;
   }
 
-  deleteUserPreferenceValue(userId: any, string: any, name: string): Promise<any> {
+  deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<any> {
     throw new Error('Method not implemented.');
   }
 }

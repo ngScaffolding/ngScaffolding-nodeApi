@@ -6,7 +6,7 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel, IUserPreferenceDefinition } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue, Role } from '@ngscaffolding/models';
+import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem } from '@ngscaffolding/models';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { IDataAccessLayer } from '../dataAccessLayer';
@@ -89,7 +89,7 @@ export class Database {
     return roles;
   }
   public async deleteRole(name: string): Promise<null> {
-    return await RoleModel.findOneAndRemove({name: name});
+    return await RoleModel.findOneAndRemove({ name: name });
   }
 
   public async addRole(role: Role): Promise<null> {
@@ -97,7 +97,7 @@ export class Database {
   }
 
   public async updateRole(role: Role): Promise<null> {
-    return await RoleModel.findOneAndUpdate({name: name}, role);
+    return await RoleModel.findOneAndUpdate({ name: name }, role);
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -127,8 +127,13 @@ export class Database {
     return menuItem;
   }
 
-  public async addMenuItem(MenuItem: IMenuItem): Promise<IMenuItem> {
-    const newMenuItem = await MenuItemModel(MenuItem).save();
+  public async deleteMenuItem(name: string): Promise<null> {
+    return await MenuItemModel.deleteOne({ name: name });
+  }
+
+  public async saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
+    const newMenuItem = await MenuItemModel.findOneAndUpdate({ name: name }, menuItem, 
+      { upsert: true, new: true });
     return newMenuItem;
   }
 
@@ -178,6 +183,18 @@ export class Database {
   public async getUserPreferenceValues(userId: string) {
     const prefs = await UserPreferenceValueModel.find({ userId: userId });
     return prefs;
+  }
+
+  public async saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
+    const newValue = await UserPreferenceValueModel
+      .findOneAndUpdate({ name: userPreference.name, userId: userPreference.userId }, userPreference, 
+      { upsert: true, new: true });
+    return newValue;
+  }
+
+  public async deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
+    const newValue = await UserPreferenceValueModel.deleteOne({ name: userPreference.name, userId: userPreference.userId });
+    return newValue;
   }
 
   //////////////////////////////////////////////////////////////////

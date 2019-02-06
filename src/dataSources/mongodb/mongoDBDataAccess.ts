@@ -60,7 +60,11 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getAppSettings();
   }
 
-  // Widget
+  // //////////////////////////////////////////////////////////////////
+  //
+  // Widgets  
+  //
+  // //////////////////////////////////////////////////////////////////
   getWidget(name: string): Promise<WidgetModelBase> {
       return DB.getWidget(name);
   }
@@ -68,17 +72,29 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getAllWidgets()
   }
 
-  // DataSource
+  // //////////////////////////////////////////////////////////////////
+  //
+  // DataSource  
+  //
+  // //////////////////////////////////////////////////////////////////
   getDataSource(name: string): Promise<BaseDataSource> {
     return DB.getDataSource(name);
   }
 
-  // Error
+  // //////////////////////////////////////////////////////////////////
+  //
+  // Error  
+  //
+  // //////////////////////////////////////////////////////////////////
   public saveError(error: ErrorModel): Promise<ErrorModel> {
     return DB.addError(error as IError);
   }
 
-  // Menu Items
+  // //////////////////////////////////////////////////////////////////
+  //
+  // MenuItems  
+  //
+  // //////////////////////////////////////////////////////////////////
   getMenuItem(name: string): Promise<CoreMenuItem> {
     throw new Error('Method not implemented.');
   }
@@ -87,10 +103,10 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getMenuItems();
   }
   saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
-    throw new Error('Method not implemented.');
+    return DB.saveMenuItem(menuItem);
   }
   deleteMenuItem(name: string): Promise<any> {
-    throw new Error('Method not implemented.');
+    return DB.deleteMenuItem(name);
   }
 
   // Reference Values
@@ -121,10 +137,10 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getUserPreferenceDefinitions();
   }
   saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    throw new Error('Method not implemented.');
+    return DB.saveUserPreferenceValue(userPreference);
   }
-  deleteUserPreferenceValue(name: string): Promise<UserPreferenceValue> {
-    throw new Error('Method not implemented.');
+  deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
+    return DB.deleteUserPreferenceValue(userPreference);
   }
   getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     
