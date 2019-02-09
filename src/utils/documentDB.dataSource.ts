@@ -18,7 +18,7 @@ export class DocumentDBCommandHandler {
       ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
         let obsCollection: Array<Promise<any>> = [];
 
-        let docDBSource = dataSouorce.dataSourceDetails as DocumentDBDataSource;
+        let docDBSource = dataSouorce as DocumentDBDataSource;
 
         // Load the connection string
         let connString = process.env['CONN_' + docDBSource.connection];

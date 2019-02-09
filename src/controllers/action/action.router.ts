@@ -32,7 +32,7 @@ export class ActionRouter {
     switch(actionRequest.action.type.toLowerCase()){
 
         case 'restapi': {
-            RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows).then(
+            RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows, inputAndRows.inputDetails).then(
                 dataResults =>{ 
                   res.json({success: true });
                 },

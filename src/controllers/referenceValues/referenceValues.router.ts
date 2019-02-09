@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { ReferenceValue, BaseDataSource, ReferenceValueItem, RestApiDataSource } from '@ngscaffolding/models';
+import { ReferenceValue, BaseDataSource, ReferenceValueItem, RestApiDataSource, DataSourceTypes } from '@ngscaffolding/models';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 
@@ -85,7 +85,7 @@ export class ReferenceValuesRouter {
           .then(dataSouorce => {
             switch (dataSouorce.type) {
               
-              case BaseDataSource.TypesRestApi: {
+              case DataSourceTypes.RestApi: {
                 RESTApiHandler.runCommand(refValue.dataSourceName, {
                   seed: seed
                 }).then(dataResults => {

@@ -28,7 +28,8 @@ export class Database {
     mongoose.Promise = global.Promise;
 
     let options: ConnectionOptions = <ConnectionOptions>{
-      promiseLibrary: global.Promise
+      promiseLibrary: global.Promise,
+      useNewUrlParser: true
     };
 
     //TODO: Need to stop this connection
