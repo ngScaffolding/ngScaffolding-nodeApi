@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { DataSourceRequest, BaseDataSource, RestApiDataSource, DataResults, SqlDataSource } from '@ngscaffolding/models';
+import { DataSourceRequest, BaseDataSource, RestApiDataSource, DataResults, SqlDataSource, DataSourceTypes } from '@ngscaffolding/models';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';
@@ -26,10 +26,10 @@ export class DataSourceRouter {
       ds.dataSource.getDataSource(dataRequest.name).then(dataSouorce => {
         switch (dataSouorce.type) {
           
-          case BaseDataSource.TypesRestApi: {
+          case DataSourceTypes.RestApi: {
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
 
-            RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(
+            RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, dataRequest.body).then(
               dataResults => {
                 dataResults.expiresSeconds = dataSouorce.expires;
                 capRes.json(dataResults);
@@ -41,16 +41,16 @@ export class DataSourceRouter {
             break;
           }
 
-          case BaseDataSource.TypesMySQL: {
+          case DataSourceTypes.MySQL: {
             break;
           }
 
-          case BaseDataSource.TypesMongoDB: {
+          case DataSourceTypes.MongoDB: {
             break;
           }
 
-          case BaseDataSource.TypesSQL: {
-            var sqlDataSource = dataSouorce.dataSourceDetails as SqlDataSource;
+          case DataSourceTypes.SQL: {
+            var sqlDataSource = dataSouorce as SqlDataSource;
 
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
             SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(
@@ -65,7 +65,7 @@ export class DataSourceRouter {
             break;
           }
 
-          case BaseDataSource.TypesDocumentDB: {
+          case DataSourceTypes.DocumentDB: {
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
 
             DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(

@@ -10,7 +10,7 @@ const request = require('request');
 require('request-to-curl');
 
 export class RESTApiHandler {
-  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
+  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}], body: any = undefined): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
@@ -18,7 +18,7 @@ export class RESTApiHandler {
       ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
         let obsCollection: Array<Promise<any>> = [];
 
-        let apiDataSource = dataSouorce.dataSourceDetails as RestApiDataSource;
+        let apiDataSource = dataSouorce as RestApiDataSource;
 
         // Return value ready
         let dataResults: DataResults = {
@@ -62,9 +62,15 @@ export class RESTApiHandler {
 
           if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
             if (apiDataSource.bodyValues && apiDataSource.bodyValues.length > 0) {
-              // Only copy values that are defined to body
-              options.json = {};
 
+              // If body passed start with that as the body content
+              if (body) {
+                options.json = body;
+              } else {
+                options.json = {};
+              }
+
+              // Only copy values that are defined to body
               apiDataSource.bodyValues.forEach(bodyValue => {
                 // Value coded into bodyValue
                 if (bodyValue.value) {
