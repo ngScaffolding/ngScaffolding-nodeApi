@@ -35,7 +35,7 @@ export class UserRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-     dataAccess.getUAppSettingsValues().then(defValues => {
+     //dataAccess.getUAppSettingsValues().then(defValues => {
     //   capRes.json(defValues);
     // });
   }
