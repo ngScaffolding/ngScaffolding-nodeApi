@@ -15,7 +15,7 @@ const DataSourceSchema = new Schema({
 
     flushReferenceValues: String,
 
-    dataSourceDetails: {},
+    itemDetails: {},
     parameters: [{}],
     inputControls: [{}],
 
