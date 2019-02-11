@@ -22,7 +22,7 @@ export class SQLCommandHandler {
       ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
         let obsCollection: Array<Promise<any>> = [];
 
-        let sqlDataSource = dataSouorce as SqlDataSource;
+        let sqlDataSource = dataSouorce.itemDetails as SqlDataSource;
 
         // Load the connection string
         let connString = process.env['CONN_' + sqlDataSource.connection];

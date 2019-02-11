@@ -18,7 +18,7 @@ export class RESTApiHandler {
       ds.dataSource.getDataSource(dataSourceName).then(dataSouorce => {
         let obsCollection: Array<Promise<any>> = [];
 
-        let apiDataSource = dataSouorce as RestApiDataSource;
+        let apiDataSource = dataSouorce.itemDetails as RestApiDataSource;
 
         // Return value ready
         let dataResults: DataResults = {

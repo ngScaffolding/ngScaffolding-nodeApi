@@ -50,9 +50,8 @@ export class DataSourceRouter {
           }
 
           case DataSourceTypes.SQL: {
-            var sqlDataSource = dataSouorce as SqlDataSource;
-
             let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+            
             SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(
               dataResults => {
                 dataResults.expiresSeconds = dataSouorce.expires;
