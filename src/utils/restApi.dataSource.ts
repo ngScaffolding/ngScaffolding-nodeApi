@@ -54,10 +54,13 @@ export class RESTApiHandler {
             }
           }
 
+          const timeoutValue = dataSouorce.timeout || 30000; 
+
           var options: Options = {
             url: replacedUrl,
             method: apiDataSource.verb,
-            headers: {}
+            headers: {},
+            timeout: timeoutValue
           };
 
           if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
@@ -104,7 +107,6 @@ export class RESTApiHandler {
           obsCollection.push(
             new Promise<any>((collResolve, colReject) => {
               request(options, (err, res, body) => {
-                let reqVal = res.request.req.toCurl();
                 if (err) {
                   colReject(err);
                 } else if (res.statusCode < 200 || res.statusCode > 299) {

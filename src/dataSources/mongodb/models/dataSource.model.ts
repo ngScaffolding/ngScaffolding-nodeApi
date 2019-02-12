@@ -9,6 +9,9 @@ export interface IDataSource extends BaseDataSource, Document {
 const DataSourceSchema = new Schema({
     name: String,
     type: String,
+    
+    expires: Number,
+    timeout: Number,
 
     isPagedData: Boolean,
     isAudit: Boolean,
