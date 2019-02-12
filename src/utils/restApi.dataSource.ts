@@ -54,7 +54,7 @@ export class RESTApiHandler {
             }
           }
 
-          const timeoutValue = dataSouorce.timeout || 30000; 
+          const timeoutValue = dataSouorce.timeout || 30000;
 
           var options: Options = {
             url: replacedUrl,
@@ -65,14 +65,6 @@ export class RESTApiHandler {
 
           if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
             if (apiDataSource.bodyValues && apiDataSource.bodyValues.length > 0) {
-
-              // If body passed start with that as the body content
-              if (body) {
-                options.json = body;
-              } else {
-                options.json = {};
-              }
-
               // Only copy values that are defined to body
               apiDataSource.bodyValues.forEach(bodyValue => {
                 // Value coded into bodyValue
@@ -91,8 +83,14 @@ export class RESTApiHandler {
                 }
               });
             } else {
-              // get vaues here
-              options.json = { ...currentRow, ...inputDetails };
+              // If body passed start with that as the body content
+              if (body) {
+                options.json = body;
+              } else {
+                options.json = {};
+              }
+              // // get vaues here
+              // options.json = { ...currentRow, ...inputDetails };
 
               //options.json = true;
             }
