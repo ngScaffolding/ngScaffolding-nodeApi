@@ -19,15 +19,8 @@ export default async function authoriseRequest(req: Request, res: Response, next
 
     // Validate & Decode Token
     try{
-        let jwtDetails = jwt.verify(apiToken, process.env.JWT_SECRET_FOR_ACCESS_TOKEN);
-
-        var current_time = Date.now().valueOf();
-        if (jwtDetails.exp < current_time) {
-            req['userDetails'] = null;
-            res.sendStatus(401);
-            return;
-        }
-        
+        let jwtDetails = jwt.verify(apiToken, process.env.JWT_PUBLIC_KEY);
+  
         // Setup UserDetailsModel from Token Details
         let userDetails: BasicUser = {...jwtDetails};
 
