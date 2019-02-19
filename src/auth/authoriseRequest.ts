@@ -23,6 +23,7 @@ export default async function authoriseRequest(req: Request, res: Response, next
   
         // Setup UserDetailsModel from Token Details
         let userDetails: BasicUser = {...jwtDetails};
+        userDetails.userId = jwtDetails['sub'];
 
         // Add UserDetailsModel to the Request Object
         req['userDetails'] = userDetails;
