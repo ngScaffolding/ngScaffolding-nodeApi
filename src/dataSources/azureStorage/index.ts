@@ -54,11 +54,15 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       tableService.queryEntities(`${this.tablePrefix}roles`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: Role[] = [];
-          results.entries.forEach(result => {
-            const entity = JSON.parse(result.data['_']);
-            returnValues.push(entity);
-          });
-          resolve(returnValues);
+          try {
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -103,7 +107,8 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
 
-  updateRole(role: Role): Promise<null> {var tableService = azure.createTableService();
+  updateRole(role: Role): Promise<null> {
+    var tableService = azure.createTableService();
 
     var entity = {
       PartitionKey: '',
@@ -119,7 +124,8 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           reject();
         }
       });
-    });}
+    });
+  }
 
   // //////////////////////////////////////////////////////////////////
   //
@@ -158,12 +164,16 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       tableService.queryEntities(`${this.tablePrefix}appsettings`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: AppSettingsValue[] = [];
-          results.entries.forEach(result => {
-            const name = result.RowKey['_'];
-            const entity = result.value['_'];
-            returnValues.push({ Id: null, name: name, value: entity });
-          });
-          resolve(returnValues);
+          try {
+            results.entries.forEach(result => {
+              const name = result.RowKey['_'];
+              const entity = result.value['_'];
+              returnValues.push({ Id: null, name: name, value: entity });
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -182,9 +192,13 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise<BaseDataSource>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}datasources`, '', name, (error, result, response) => {
         if (!error) {
-          const entity = JSON.parse(result.data['_']);
+          let entity;
+          try {
+            entity = JSON.parse(result.data['_']);
+          } catch (err) {
+            reject(err);
+          }
           resolve(entity);
-          
         } else {
           reject(error);
         }
@@ -205,12 +219,15 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       tableService.queryEntities(`${this.tablePrefix}widgets`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: WidgetModelBase[] = [];
-          results.entries.forEach(result => {
-            const entity = JSON.parse(result.data['_']);
-            returnValues.push(entity);
-          });
-          resolve(returnValues);
-          
+          try {
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -224,9 +241,12 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise<WidgetModelBase>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}widgets`, '', name, (error, result, response) => {
         if (!error) {
-          const entity = JSON.parse(result.data['_']);
-          resolve(entity);
-          
+          try {
+            const entity = JSON.parse(result.data['_']);
+            resolve(entity);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -260,12 +280,14 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise<CoreMenuItem>((resolve, reject) => {
       tableService.retrieveEntity(`${this.tablePrefix}menuitems`, '', name, (error, result, response) => {
         if (!error) {
-          const entity = JSON.parse(result.data['_']);
-          resolve(entity);
-          
+          try {
+            const entity = JSON.parse(result.data['_']);
+            resolve(entity);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           resolve(null);
-          
         }
       });
     });
@@ -278,12 +300,15 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       tableService.queryEntities(`${this.tablePrefix}menuitems`, query, null, (error, results, response) => {
         if (!error) {
           let returnValues: CoreMenuItem[] = [];
-          results.entries.forEach(result => {
-            const entity = JSON.parse(result.data['_']);
-            returnValues.push(entity);
-          });
-          resolve(returnValues);
-          
+          try {
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -306,7 +331,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             if (!error) {
               // Entity updated
               resolve(menuItem);
-              
             } else {
               reject(error);
             }
@@ -322,7 +346,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             if (!error) {
               // Entity updated
               resolve(menuItem);
-              
             } else {
               reject(error);
             }
@@ -342,7 +365,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
         if (!error) {
           // Entity deleted
           resolve();
-          
         } else {
           reject(error);
         }
@@ -364,14 +386,17 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
 
         tableService.queryEntities(`${this.tablePrefix}referencevalues`, query, null, (error, results, response) => {
           if (!error) {
-            results.entries.forEach(result => {
-              const entity: ReferenceValue = JSON.parse(result.data['_']);
-              if (entity.groupName.toLowerCase() === group.toLowerCase()) {
-                returnValues.push(entity);
-              }
-            });
-            resolve(returnValues);
-            
+            try {
+              results.entries.forEach(result => {
+                const entity: ReferenceValue = JSON.parse(result.data['_']);
+                if (entity.groupName.toLowerCase() === group.toLowerCase()) {
+                  returnValues.push(entity);
+                }
+              });
+              resolve(returnValues);
+            } catch (error) {
+              reject(error);
+            }
           } else {
             reject(error);
           }
@@ -382,9 +407,12 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
         // Just get by name
         tableService.retrieveEntity(`${this.tablePrefix}referencevalues`, '', name, (error, result, response) => {
           if (!error) {
-            const entity = JSON.parse(result.data['_']);
-            resolve(entity);
-            
+            try {
+              const entity = JSON.parse(result.data['_']);
+              resolve(entity);
+            } catch (error) {
+              reject(error);
+            }
           } else {
             reject(error);
           }
@@ -402,13 +430,16 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise<UserPreferenceDefinition[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}userpreferencedefinitions`, query, null, (error, results, response) => {
         if (!error) {
-          let returnValues: UserPreferenceDefinition[] = [];
-          results.entries.forEach(result => {
-            const entity = JSON.parse(result.data['_']);
-            returnValues.push(entity);
-          });
-          resolve(returnValues);
-          
+          try {
+            let returnValues: UserPreferenceDefinition[] = [];
+            results.entries.forEach(result => {
+              const entity = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -422,13 +453,16 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     return new Promise<UserPreferenceValue[]>((resolve, reject) => {
       tableService.queryEntities(`${this.tablePrefix}userpreferencevalues`, query, null, (error, results, response) => {
         if (!error) {
-          let returnValues: UserPreferenceValue[] = [];
-          results.entries.forEach(result => {
-            const entity: UserPreferenceValue = JSON.parse(result.data['_']);
-            returnValues.push(entity);
-          });
-          resolve(returnValues);
-          
+          try {
+            let returnValues: UserPreferenceValue[] = [];
+            results.entries.forEach(result => {
+              const entity: UserPreferenceValue = JSON.parse(result.data['_']);
+              returnValues.push(entity);
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
         } else {
           reject(error);
         }
@@ -456,7 +490,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             if (!error) {
               // Entity updated
               resolve(existingPref);
-              
             } else {
               reject(error);
             }
@@ -472,7 +505,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             if (!error) {
               // Entity updated
               resolve(existingPref);
-              
             } else {
               reject(error);
             }

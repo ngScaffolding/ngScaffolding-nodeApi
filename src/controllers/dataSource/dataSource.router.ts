@@ -7,6 +7,7 @@ import { SQLCommandHandler } from '../../utils/mssql.dataSource';
 import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
+const winston = require('../../config/winston');
 
 export class DataSourceRouter {
   router: Router;
@@ -23,64 +24,85 @@ export class DataSourceRouter {
     let capRes = res;
 
     if (dataRequest) {
-      ds.dataSource.getDataSource(dataRequest.name).then(dataSouorce => {
-        switch (dataSouorce.type) {
-          
-          case DataSourceTypes.RestApi: {
-            let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
 
-            RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, dataRequest.body).then(
-              dataResults => {
-                dataResults.expiresSeconds = dataSouorce.expires;
-                capRes.json(dataResults);
-              },
-              err => {
-                capRes.status(500).send('Call failed');
-              }
-            );
-            break;
+      ds.dataSource
+        .getDataSource(dataRequest.name)
+        .then(dataSouorce => {
+          switch (dataSouorce.type) {
+            case DataSourceTypes.RestApi: {
+              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+              RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, dataRequest.body)
+                .then(
+                  dataResults => {
+                    dataResults.expiresSeconds = dataSouorce.expires;
+                    capRes.json(dataResults);
+                  },
+                  err => {
+                    capRes.status(500).send('Call failed');
+                  }
+                )
+                .catch(err => {
+                  winston.error(err);
+                  capRes.status(500).send('Call failed');
+                });
+              break;
+            }
+
+            case DataSourceTypes.MySQL: {
+              break;
+            }
+
+            case DataSourceTypes.MongoDB: {
+              break;
+            }
+
+            case DataSourceTypes.SQL: {
+              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+              SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
+                .then(
+                  dataResults => {
+                    dataResults.expiresSeconds = dataSouorce.expires;
+                    capRes.json(dataResults);
+                  },
+                  err => {
+                    capRes.status(500).send('Call failed');
+                  }
+                )
+                .catch(err => {
+                  winston.error(err);
+                  capRes.status(500).send('Call failed');
+                });
+              break;
+            }
+
+            case DataSourceTypes.DocumentDB: {
+              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+              DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
+                .then(
+                  dataResults => {
+                    dataResults.expiresSeconds = dataSouorce.expires;
+                    capRes.json(dataResults);
+                  },
+                  err => {
+                    capRes.status(500).send('Call failed');
+                  }
+                )
+                .catch(err => {
+                  winston.error(err);
+                  capRes.status(500).send('Call failed');
+                });
+
+              break;
+            }
           }
-
-          case DataSourceTypes.MySQL: {
-            break;
-          }
-
-          case DataSourceTypes.MongoDB: {
-            break;
-          }
-
-          case DataSourceTypes.SQL: {
-            let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
-            
-            SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(
-              dataResults => {
-                dataResults.expiresSeconds = dataSouorce.expires;
-                capRes.json(dataResults);
-              },
-              err => {
-                capRes.status(500).send('Call failed');
-              }
-            );
-            break;
-          }
-
-          case DataSourceTypes.DocumentDB: {
-            let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
-
-            DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows).then(
-              dataResults => {
-                dataResults.expiresSeconds = dataSouorce.expires;
-                capRes.json(dataResults);
-              },
-              err => {
-                capRes.status(500).send('Call failed');
-              }
-            );
-
-            break;
-          }
-        }
-      });
+        })
+        .catch(err => {
+          winston.error(err);
+          capRes.status(500).send('Call failed');
+        });
     }
   }
 
