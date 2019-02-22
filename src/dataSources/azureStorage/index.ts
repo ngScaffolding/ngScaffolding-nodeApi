@@ -200,7 +200,11 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           }
           resolve(entity);
         } else {
-          reject(error);
+          if (error.statusCode === 404) {
+            resolve(null);
+          } else {
+            reject(error);
+          }
         }
       });
     });
@@ -208,34 +212,29 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> {
     var tableService = azure.createTableService();
 
-    return new Promise<CoreMenuItem>((resolve, reject) => {
+    return new Promise<BaseDataSource>((resolve, reject) => {
+      var entity = {
+        PartitionKey: '',
+        RowKey: dataSource.name,
+        data: JSON.stringify(dataSource)
+      };
       // Find if exists
-      this.getMenuItem(menuItem.name).then(menu => {
-        if (menu) {
-          var entity = {
-            PartitionKey: '',
-            RowKey: menuItem.name,
-            data: JSON.stringify(menuItem)
-          };
-          tableService.replaceEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+      this.getDataSource(dataSource.name).then(dataSource => {
+        if (dataSource) {
+          tableService.replaceEntity(`${this.tablePrefix}dataSources`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              resolve(menuItem);
+              resolve(dataSource);
             } else {
               reject(error);
             }
           });
         } else {
           // Insert Time
-          var entity = {
-            PartitionKey: '',
-            RowKey: menuItem.name,
-            data: JSON.stringify(menuItem)
-          };
-          tableService.insertEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+          tableService.insertEntity(`${this.tablePrefix}dataSources`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated
-              resolve(menuItem);
+              resolve(dataSource);
             } else {
               reject(error);
             }
@@ -428,9 +427,9 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             try {
               results.entries.forEach(result => {
                 const entity: ReferenceValue = JSON.parse(result.data['_']);
-                if (entity.groupName.toLowerCase() === group.toLowerCase()) {
-                  returnValues.push(entity);
-                }
+                // if (entity.groupName.toLowerCase() === group.toLowerCase()) {
+                //   returnValues.push(entity);
+                // }
               });
               resolve(returnValues);
             } catch (error) {

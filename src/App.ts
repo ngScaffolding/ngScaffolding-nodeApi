@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import authoriseRequest from './auth/authoriseRequest';
+import { initialSetup } from './initialSetup/setup';
 
 var winston = require('./config/winston');
 
@@ -10,6 +11,9 @@ var jwt = require('express-jwt');
 var cors = require('cors')
 
 import { RouterSetup } from './routes/routing';
+
+// Get the command line params
+var argv = require('minimist')(process.argv.slice(2));
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -19,6 +23,11 @@ class App {
 
   //Run configuration methods on the Express instance.
   constructor() {
+    if (argv['setup']) {
+      winston.info('Running Initial setup');
+      initialSetup();
+    }
+
     winston.info('API Starting');
     
     this.express = express();

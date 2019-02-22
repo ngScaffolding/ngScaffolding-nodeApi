@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from "../dataSourceSwitch";
-import { BaseDataSource, RestApiDataSource, DataSourceTypes } from "@ngscaffolding/models";
+import { BaseDataSource, RestApiDataSource, DataSourceTypes, SystemDataSourceNames } from "@ngscaffolding/models";
 
 var DataSourceSwitch = require('../dataSourceSwitch');
 
@@ -7,7 +7,7 @@ export function setupDataSource(){
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
     var userList: BaseDataSource ={
-        name: 'users.Select',
+        name: SystemDataSourceNames.USERS_SELECT,
         isAudit: true,
         type: DataSourceTypes.RestApi,
         itemDetails: <RestApiDataSource>{

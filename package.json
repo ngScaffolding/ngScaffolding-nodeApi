@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js --setup\"",
     "debug": "nodemon --inspect dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
     "postinstall": "node_modules\\.bin\\tsc -p .",
@@ -33,7 +33,7 @@
     "typescript": "^2.8.3"
   },
   "dependencies": {
-    "@ngscaffolding/models": "^1.0.108",
+    "@ngscaffolding/models": "^1.0.114",
     "@types/mssql": "^4.0.10",
     "@types/request": "^2.47.1",
     "app-root-path": "^2.1.0",
@@ -50,6 +50,7 @@
     "gulp-typescript": "^4.0.2",
     "highcharts": "^6.1.1",
     "jsonwebtoken": "^8.3.0",
+    "minimist": "^1.2.0",
     "mongoose": "^5.1.7",
     "morgan": "^1.9.0",
     "mssql": "^4.2.1",
