@@ -12,9 +12,22 @@ export function setupDataSource(){
         type: DataSourceTypes.RestApi,
         itemDetails: <RestApiDataSource>{
             verb: 'get',
-            url: '/api/v1/user',
+            url: '/api/v1/users',
             serverName: 'OAUTH'
         }
     };
     ds.dataSource.saveDataSource(userList);
+
+    //////////////////////////////////
+    // roles
+    ds.dataSource.saveDataSource({
+        name: SystemDataSourceNames.ROLES_SELECT,
+        isAudit: true,
+        type: DataSourceTypes.RestApi,
+        itemDetails: <RestApiDataSource>{
+            verb: 'get',
+            url: '/api/v1/roles',
+            serverName: 'OAUTH'
+        }
+    });
 }
