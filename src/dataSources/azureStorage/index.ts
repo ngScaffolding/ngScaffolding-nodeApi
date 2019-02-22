@@ -205,6 +205,45 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       });
     });
   }
+  saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> {
+    var tableService = azure.createTableService();
+
+    return new Promise<CoreMenuItem>((resolve, reject) => {
+      // Find if exists
+      this.getMenuItem(menuItem.name).then(menu => {
+        if (menu) {
+          var entity = {
+            PartitionKey: '',
+            RowKey: menuItem.name,
+            data: JSON.stringify(menuItem)
+          };
+          tableService.replaceEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(menuItem);
+            } else {
+              reject(error);
+            }
+          });
+        } else {
+          // Insert Time
+          var entity = {
+            PartitionKey: '',
+            RowKey: menuItem.name,
+            data: JSON.stringify(menuItem)
+          };
+          tableService.insertEntity(`${this.tablePrefix}menuitems`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(menuItem);
+            } else {
+              reject(error);
+            }
+          });
+        }
+      });
+    });
+  }
 
   // //////////////////////////////////////////////////////////////////
   //
