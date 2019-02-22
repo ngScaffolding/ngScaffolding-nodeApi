@@ -40,7 +40,7 @@ export class ReferenceValuesRouter {
           arrayRefValues.forEach(refValue => {
             // Call Populate RefValues
 
-            let refObs = ReferenceValuesRouter.populateReferenceValue(refValue, seed)
+            let refObs = ReferenceValuesRouter.populateReferenceValue(refValue, seed, req.headers.authorization);
 
             arrRefValueGetters.push(refObs);
           });
@@ -73,7 +73,7 @@ export class ReferenceValuesRouter {
       );
   }
 
-  private static populateReferenceValue  (refValue: ReferenceValue, seed: string): Promise<ReferenceValue> {
+  private static populateReferenceValue  (refValue: ReferenceValue, seed: string, authHeader: string): Promise<ReferenceValue> {
     return new Promise<ReferenceValue>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
@@ -88,7 +88,7 @@ export class ReferenceValuesRouter {
               case DataSourceTypes.RestApi: {
                 RESTApiHandler.runCommand(refValue.dataSourceName, {
                   seed: seed
-                }).then(dataResults => {
+                },null, authHeader).then(dataResults => {
                   let returnedItems: any[] = JSON.parse(dataResults.jsonData);
                   refValue.referenceValueItems = [];
                   let idCount = 0;

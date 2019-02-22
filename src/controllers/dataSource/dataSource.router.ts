@@ -32,13 +32,14 @@ export class DataSourceRouter {
             case DataSourceTypes.RestApi: {
               let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
 
-              RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, dataRequest.body)
+              RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, req.headers.authorization, dataRequest.body)
                 .then(
                   dataResults => {
                     dataResults.expiresSeconds = dataSouorce.expires;
                     capRes.json(dataResults);
                   },
                   err => {
+                    winston.error(err);
                     capRes.status(500).send('Call failed');
                   }
                 )

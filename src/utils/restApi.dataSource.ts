@@ -10,7 +10,13 @@ const request = require('request');
 require('request-to-curl');
 
 export class RESTApiHandler {
-  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}], body: any = undefined): Promise<any> {
+  public static runCommand(
+    dataSourceName: string | string[],
+    inputDetails: any = undefined,
+    rows: any[] = [{}],
+    authHeader: string,
+    body: any = undefined
+  ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
@@ -47,7 +53,7 @@ export class RESTApiHandler {
             }
 
             if (!!serverUrl) {
-              if (!serverUrl.endsWith('/')) {
+              if (!serverUrl.endsWith('/') && !replacedUrl.startsWith('/')) {
                 serverUrl = serverUrl + '/';
               }
               replacedUrl = `${serverUrl}${replacedUrl}`;
@@ -62,6 +68,10 @@ export class RESTApiHandler {
             headers: {},
             timeout: timeoutValue
           };
+
+          if (authHeader) {
+            options.headers['Authorization'] = authHeader;
+          }
 
           if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
             if (apiDataSource.bodyValues && apiDataSource.bodyValues.length > 0) {
