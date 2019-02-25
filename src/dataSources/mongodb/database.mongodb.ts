@@ -6,7 +6,7 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel, IUserPreferenceDefinition } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem } from '@ngscaffolding/models';
+import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem, UserPreferenceDefinition } from '@ngscaffolding/models';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { IDataAccessLayer } from '../dataAccessLayer';
@@ -179,6 +179,13 @@ export class Database {
   public async getUserPreferenceDefinitions() {
     const prefs = await UserPreferenceDefinitionModel.find({});
     return prefs;
+  }
+
+  public async saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition> {
+    const newValue = await UserPreferenceDefinitionModel
+      .findOneAndUpdate({ name: userPreferenceDefinition.name }, userPreferenceDefinition, 
+      { upsert: true, new: true });
+    return newValue;
   }
 
   public async getUserPreferenceValues(userId: string) {

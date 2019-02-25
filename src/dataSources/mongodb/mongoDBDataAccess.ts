@@ -123,7 +123,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     }
   }
 
-  public addReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
+  public saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
     return new Promise<ReferenceValue>((resolve, reject) => {
       DB.addReferenceValue(referenceValue as IReferenceValue)
         .then(log => {
@@ -139,6 +139,10 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
     return DB.getUserPreferenceDefinitions();
   }
+  saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition>{
+    return DB.saveUserPreferenceDefinition(userPreferenceDefinition);
+  }
+
   saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
     return DB.saveUserPreferenceValue(userPreference);
   }

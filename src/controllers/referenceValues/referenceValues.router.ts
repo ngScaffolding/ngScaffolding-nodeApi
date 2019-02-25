@@ -24,18 +24,10 @@ export class ReferenceValuesRouter {
 
     ds.dataSource
       .getReferenceValues(name, seed, group)
-      .then(refValues => {
+      .then(arrayRefValues => {
         // Now we have ref values
 
-        if (refValues) {
-          let arrayRefValues = [];
-
-          if (Array.isArray(refValues)) {
-            arrayRefValues = refValues;
-          } else {
-            arrayRefValues.push(refValues);
-          }
-
+        if (arrayRefValues) {
           // Loop through RefValues Returned
           arrayRefValues.forEach(refValue => {
             // Call Populate RefValues
@@ -64,7 +56,7 @@ export class ReferenceValuesRouter {
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
     ds.dataSource
-      .addReferenceValue(req.body as ReferenceValue)
+      .saveReferenceValue(req.body as ReferenceValue)
       .then(
         val => {
           res.json(val);

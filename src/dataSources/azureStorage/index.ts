@@ -168,7 +168,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             results.entries.forEach(result => {
               const name = result.RowKey['_'];
               const entity = result.value['_'];
-              returnValues.push({ Id: null, name: name, value: entity });
+              returnValues.push({ name: name, value: entity });
             });
             resolve(returnValues);
           } catch (error) {
@@ -447,20 +447,61 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
           if (!error) {
             try {
               const entity = JSON.parse(result.data['_']);
-              resolve(entity);
+              resolve([entity]);
             } catch (error) {
               reject(error);
             }
           } else {
-            reject(error);
+            resolve(null);
           }
         });
       }
     });
   }
-  addReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
-    throw new Error('Method not implemented.');
+  saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
+    var tableService = azure.createTableService();
+
+    return new Promise<ReferenceValue>((resolve, reject) => {
+      var entity = {
+        PartitionKey: '',
+        RowKey: referenceValue.name,
+        data: JSON.stringify(referenceValue)
+      };
+
+      // Find if exists
+      this.getReferenceValues(referenceValue.name, null, null).then(foundRefs => {
+
+        
+        if (foundRefs && foundRefs.length > 0) {
+          let foundRef = foundRefs[0];
+          tableService.replaceEntity(`${this.tablePrefix}referencevalues`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(foundRef);
+            } else {
+              reject(error);
+            }
+          });
+        } else {
+          // Insert Time
+          tableService.insertEntity(`${this.tablePrefix}referencevalues`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(referenceValue);
+            } else {
+              reject(error);
+            }
+          });
+        }
+      });
+    });
   }
+
+  // //////////////////////////////////////////////////////////////////
+  //
+  // User Preferentce Definitions Section
+  //
+  // //////////////////////////////////////////////////////////////////
   getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('PartitionKey eq ?', '');
@@ -484,6 +525,46 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       });
     });
   }
+
+  saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition>{
+    var tableService = azure.createTableService();
+
+    return new Promise<UserPreferenceDefinition>((resolve, reject) => {
+      var entity = {
+        PartitionKey: '',
+        RowKey: userPreferenceDefinition.name,
+        data: JSON.stringify(userPreferenceDefinition)
+      };
+
+      // Find if exists
+      this.getUserPreferenceDefinitions().then(userPreferenceDefinitions => {
+        let foundDef = userPreferenceDefinitions.find(def => def.name === userPreferenceDefinition.name);
+
+        if (foundDef) {
+          tableService.replaceEntity(`${this.tablePrefix}userpreferencedefinitions`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(foundDef);
+            } else {
+              reject(error);
+            }
+          });
+        } else {
+          // Insert Time
+          tableService.insertEntity(`${this.tablePrefix}userpreferencedefinitions`, entity, function(error, result, response) {
+            if (!error) {
+              // Entity updated
+              resolve(foundDef);
+            } else {
+              reject(error);
+            }
+          });
+        }
+      });
+    });
+  }
+
+
   getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     var tableService = azure.createTableService();
     var query = new azure.TableQuery().where('RowKey ge ?', userId);
