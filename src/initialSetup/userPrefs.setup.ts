@@ -29,7 +29,7 @@ export function setupUserPrefs() {
     name: 'DarkMenu',
     inputDetails: {
       name: 'DarkMenu',
-      type: InputTypes.checkbox,
+      type: InputTypes.switch,
       label: 'Dark/Light Menu',
       help: 'Dark or Light Menu'
     }
@@ -38,7 +38,7 @@ export function setupUserPrefs() {
     name: 'CompactMode',
     inputDetails: {
       name: 'CompactMode',
-      type: InputTypes.checkbox,
+      type: InputTypes.switch,
       label: 'Compact Mode',
       help: 'Select the Compact/Expand Mode'
     }
