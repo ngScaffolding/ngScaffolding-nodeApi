@@ -414,40 +414,17 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
   // Reference Values Section
   //
   // //////////////////////////////////////////////////////////////////
-  getReferenceValues(name: string, seed: string, group: string): Promise<ReferenceValue[]> {
+  getReferenceValue(name: string): Promise<ReferenceValue> {
     var tableService = azure.createTableService();
-    var returnValues: ReferenceValue[] = [];
 
-    return new Promise<ReferenceValue[]>((resolve, reject) => {
-      if (group) {
-        var query = new azure.TableQuery().where('PartitionKey eq ?', '');
-
-        tableService.queryEntities(`${this.tablePrefix}referencevalues`, query, null, (error, results, response) => {
-          if (!error) {
-            try {
-              results.entries.forEach(result => {
-                const entity: ReferenceValue = JSON.parse(result.data['_']);
-                // if (entity.groupName.toLowerCase() === group.toLowerCase()) {
-                //   returnValues.push(entity);
-                // }
-              });
-              resolve(returnValues);
-            } catch (error) {
-              reject(error);
-            }
-          } else {
-            reject(error);
-          }
-        });
-      } else if (seed) {
-        reject('Not Implemented');
-      } else {
+    return new Promise<ReferenceValue>((resolve, reject) => {
+      
         // Just get by name
         tableService.retrieveEntity(`${this.tablePrefix}referencevalues`, '', name, (error, result, response) => {
           if (!error) {
             try {
               const entity = JSON.parse(result.data['_']);
-              resolve([entity]);
+              resolve(entity);
             } catch (error) {
               reject(error);
             }
@@ -455,7 +432,6 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
             resolve(null);
           }
         });
-      }
     });
   }
   saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
@@ -469,11 +445,8 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       };
 
       // Find if exists
-      this.getReferenceValues(referenceValue.name, null, null).then(foundRefs => {
-
-        
-        if (foundRefs && foundRefs.length > 0) {
-          let foundRef = foundRefs[0];
+      this.getReferenceValue(referenceValue.name).then(foundRef => {
+        if (foundRef) {
           tableService.replaceEntity(`${this.tablePrefix}referencevalues`, entity, function(error, result, response) {
             if (!error) {
               // Entity updated

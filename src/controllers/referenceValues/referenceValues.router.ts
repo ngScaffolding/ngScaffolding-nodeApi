@@ -13,92 +13,76 @@ export class ReferenceValuesRouter {
     this.init();
   }
 
-  public getReferenceValues(req: Request, res: Response, next: NextFunction) {
+  public getReferenceValue(req: Request, res: Response, next: NextFunction) {
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
     let name = req.query.name;
     let seed = req.query.seed;
-    let group = req.query.group;
 
     let arrRefValueGetters: Array<Promise<ReferenceValue>> = [];
 
-    ds.dataSource
-      .getReferenceValues(name, seed, group)
-      .then(arrayRefValues => {
-        // Now we have ref values
-
-        if (arrayRefValues) {
-          // Loop through RefValues Returned
-          arrayRefValues.forEach(refValue => {
-            // Call Populate RefValues
-
-            let refObs = ReferenceValuesRouter.populateReferenceValue(refValue, seed, req.headers.authorization);
-
-            arrRefValueGetters.push(refObs);
-          });
-        }
-
-        if (arrRefValueGetters.length > 0) {
-          Promise.all(arrRefValueGetters).then(results => {
-            if(results.length === 1){
-              res.json(results[0]);
-            }else {
-              res.json(results);
-            }
-          });
-        } else {
-          res.json([]);
-        }
-      });
+    ds.dataSource.getReferenceValue(name).then(
+      refValue => {
+        ReferenceValuesRouter.populateReferenceValue(refValue, seed, req.headers.authorization).then(refValue => {
+          res.json(refValue);
+        }, error => { 
+          res.sendStatus(500);
+        });
+      },
+      error => {
+        res.sendStatus(500);
+      }
+    );
   }
 
-  public addReferenceValue(req: Request, res: Response)  {
+  public addReferenceValue(req: Request, res: Response) {
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
-    ds.dataSource
-      .saveReferenceValue(req.body as ReferenceValue)
-      .then(
-        val => {
-          res.json(val);
-        },
-        err => {}
-      );
+    ds.dataSource.saveReferenceValue(req.body as ReferenceValue).then(
+      val => {
+        res.json(val);
+      },
+      err => {}
+    );
   }
 
-  private static populateReferenceValue  (refValue: ReferenceValue, seed: string, authHeader: string): Promise<ReferenceValue> {
+  private static populateReferenceValue(refValue: ReferenceValue, seed: string, authHeader: string): Promise<ReferenceValue> {
     return new Promise<ReferenceValue>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
       // Data Comes from somewhere else
       if (refValue.dataSourceName) {
         // Go Fetch
-        ds.dataSource
-          .getDataSource(refValue.dataSourceName)
-          .then(dataSouorce => {
+        ds.dataSource.getDataSource(refValue.dataSourceName).then(
+          dataSouorce => {
             switch (dataSouorce.type) {
-              
               case DataSourceTypes.RestApi: {
-                RESTApiHandler.runCommand(refValue.dataSourceName, {
-                  seed: seed
-                },null, authHeader).then(dataResults => {
-                  let returnedItems: any[] = JSON.parse(dataResults.jsonData);
-                  refValue.referenceValueItems = [];
-                  let idCount = 0;
-                  returnedItems.forEach(item => {
-                    refValue.referenceValueItems.push({
-                      value: item[refValue.valueProperty],
-                      display: item[refValue.displayProperty],
-                      itemOrder: item[refValue.itemOrderProperty],
-                      subtitle: item[refValue.subtitleProperty]
+                RESTApiHandler.runCommand(refValue.dataSourceName, { seed: seed }, null, authHeader).then(dataResults => {
+                  if (!dataResults) {
+                    reject();
+                  } else {
+                    let returnedItems: any[] = JSON.parse(dataResults.jsonData);
+                    refValue.referenceValueItems = [];
+                    let idCount = 0;
+                    returnedItems.forEach(item => {
+                      refValue.referenceValueItems.push({
+                        value: item[refValue.valueProperty],
+                        display: item[refValue.displayProperty],
+                        itemOrder: item[refValue.itemOrderProperty],
+                        subtitle: item[refValue.subtitleProperty]
+                      });
                     });
-                  });
-                  resolve(refValue);
+                    resolve(refValue);
+                  }
                 });
-
                 break;
               }
             }
-          });
+          },
+          error => {
+            reject(error);
+          }
+        );
       } else {
         resolve(refValue);
       }
@@ -106,7 +90,7 @@ export class ReferenceValuesRouter {
   }
 
   init() {
-    this.router.get('/', this.getReferenceValues);
+    this.router.get('/', this.getReferenceValue);
     this.router.post('/', this.addReferenceValue);
   }
 }

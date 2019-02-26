@@ -81,7 +81,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.getDataSource(name);
   }
   saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> { 
-    return null;
+    return DB.saveDataSource(dataSource);
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -112,27 +112,17 @@ export class MongoDBDataAccess implements IDataAccessLayer {
     return DB.deleteMenuItem(name);
   }
 
+  // //////////////////////////////////////////////////////////////////
+  //
   // Reference Values
-  public getReferenceValues(name: string, seed: string, group: string): Promise<ReferenceValue[]> {
-    if (group) {
-      return DB.getReferenceValuesForGroup(group);
-    } else if (seed) {
-      return DB.getReferenceValuesByName(name);
-    } else {
-      return DB.getReferenceValuesByName(name);
-    }
+  //
+  // //////////////////////////////////////////////////////////////////
+  public getReferenceValue(name: string): Promise<ReferenceValue> {
+      return DB.getReferenceValueByName(name);
   }
 
   public saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
-    return new Promise<ReferenceValue>((resolve, reject) => {
-      DB.addReferenceValue(referenceValue as IReferenceValue)
-        .then(log => {
-          resolve(log);
-        })
-        .catch((err: Error) => {
-          reject(err);
-        });
-    });
+    return DB.saveReferenceValue(referenceValue);
   }
 
   // User Prefs

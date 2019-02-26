@@ -6,7 +6,16 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel, IUserPreferenceDefinition } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import { ReferenceValue, ErrorModel, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem, UserPreferenceDefinition } from '@ngscaffolding/models';
+import {
+  ReferenceValue,
+  ErrorModel,
+  UserPreferenceValue,
+  AppSettingsValue,
+  Role,
+  CoreMenuItem,
+  UserPreferenceDefinition,
+  BaseDataSource
+} from '@ngscaffolding/models';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { IDataAccessLayer } from '../dataAccessLayer';
@@ -112,6 +121,10 @@ export class Database {
     return menuItem;
   }
 
+  public async saveDataSource(dataSource: BaseDataSource): Promise<IDataSource> {
+    return await DataSourceModel.findOneAndUpdate({ name: dataSource.name }, dataSource, { upsert: true, new: true });
+  }
+
   // //////////////////////////////////////////////////////////////////
   //
   // Menu Items Section
@@ -133,8 +146,7 @@ export class Database {
   }
 
   public async saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
-    const newMenuItem = await MenuItemModel.findOneAndUpdate({ name: name }, menuItem, 
-      { upsert: true, new: true });
+    const newMenuItem = await MenuItemModel.findOneAndUpdate({ name: name }, menuItem, { upsert: true, new: true });
     return newMenuItem;
   }
 
@@ -144,18 +156,14 @@ export class Database {
   //
   // //////////////////////////////////////////////////////////////////
 
-  public async getReferenceValuesByName(name: string): Promise<ReferenceValue[]> {
+  public async getReferenceValueByName(name: string): Promise<ReferenceValue> {
     const menuItem = await ReferenceValueModel.findOne({ name: name });
     return menuItem;
   }
 
-  public async getReferenceValuesForGroup(group: string): Promise<ReferenceValue[]> {
-    const menuItem = await ReferenceValueModel.find({ groupName: group });
-    return menuItem;
-  }
-
-  public async addReferenceValue(referenceValue: IReferenceValue) {
-    const newItem = await ReferenceValueModel(referenceValue).save();
+  public async saveReferenceValue(referenceValue: ReferenceValue) {
+    const newItem = await ReferenceValueModel
+      .findOneAndUpdate({ name: referenceValue.name }, referenceValue, { upsert: true, new: true });
     return newItem;
   }
 
@@ -182,9 +190,10 @@ export class Database {
   }
 
   public async saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition> {
-    const newValue = await UserPreferenceDefinitionModel
-      .findOneAndUpdate({ name: userPreferenceDefinition.name }, userPreferenceDefinition, 
-      { upsert: true, new: true });
+    const newValue = await UserPreferenceDefinitionModel.findOneAndUpdate({ name: userPreferenceDefinition.name }, userPreferenceDefinition, {
+      upsert: true,
+      new: true
+    });
     return newValue;
   }
 
@@ -194,9 +203,10 @@ export class Database {
   }
 
   public async saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    const newValue = await UserPreferenceValueModel
-      .findOneAndUpdate({ name: userPreference.name, userId: userPreference.userId }, userPreference, 
-      { upsert: true, new: true });
+    const newValue = await UserPreferenceValueModel.findOneAndUpdate({ name: userPreference.name, userId: userPreference.userId }, userPreference, {
+      upsert: true,
+      new: true
+    });
     return newValue;
   }
 
