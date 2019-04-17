@@ -23,9 +23,11 @@ export class DataSourceHelper {
       returnValues.rows.push({});
     }
 
-    // Decode Input
-    if (inputDetails) {
+    // Decode Input if JSON string
+    if (inputDetails && (typeof inputDetails === 'string')) {
       returnValues.inputDetails = JSON.parse(inputDetails);
+    } else {
+      returnValues.inputDetails = inputDetails;
     }
     return returnValues;
   }
