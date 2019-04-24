@@ -49,6 +49,12 @@ class App {
     this.express.use(cors())
     this.express.use(authoriseRequest);
     this.express.use(bodyParser.urlencoded({ extended: false }));
+    this.express.use(function(err,req,res,next){
+      if(err) {
+        winston.error(err);
+        console.error(err);
+      }
+    });
   }
 }
 
