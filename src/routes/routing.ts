@@ -8,6 +8,7 @@ import ActionRouter from '../controllers/action/action.router';
 import ErrorRouter from '../controllers/error/error.router';
 import UserPreferenceDefinitionRouter from '../controllers/userPreferenceDefinition/userPreferenceDefinition.router';
 import UserPreferenceValueRouter from '../controllers/userPreferenceValue/userPreferenceValue.router';
+import DefaultRouter from './defaultRouter';
 
 import isUserInRole from '../auth/authoriseRoles';
 import WidgetsRouter from '../controllers/widgets/widgets.router';
@@ -29,7 +30,7 @@ export class RouterSetup{
     let router = express.Router();
     
    // this.express.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    this.express.use('/', router);
+    this.express.use('/', DefaultRouter);
     this.express.use('/api/v1/applicationLog', ApplicationLogRouter);
     this.express.use('/api/v1/appsettings', AppSettingsRouter);
     this.express.use('/api/v1/referencevalues', isUserInRole('user'), ReferenceValuesRouter);

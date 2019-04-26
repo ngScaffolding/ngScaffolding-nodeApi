@@ -40,10 +40,8 @@ class App {
   // Configure Express middleware.
   private middleware(): void {
 
-    this.express.get('/', (req,res) => {
-      res.send('nodeAPI Running');
-  });
-
+    this.express.set('views', path.join(__dirname, 'views'));
+    this.express.set('view engine', 'pug');
     this.express.use(morgan('combined', { stream: winston.stream }));
     this.express.use(bodyParser.json());
     this.express.use(cors())
