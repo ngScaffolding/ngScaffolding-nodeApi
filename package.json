@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/index.js",
-    "copy-assets": "ts-node tools/copyAssets & copy .env dist",
+    "copy-assets": "ts-node tools/copyAssets",
     "dev": "npm-run-all copy-assets debug",
     "debug": "tsc-watch --onSuccess \"node dist/index.js\"",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
