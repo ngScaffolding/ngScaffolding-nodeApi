@@ -5,7 +5,7 @@ export class DocumentDBUtils {
     return new Promise<any[]>((resolve, reject) => {
       this.getOrCreateDatabase(client, databaseName).then(dataBase=>{
         this.getOrCreateCollection(client, dataBase._self, collectionName).then(collection => {
-            client.queryDocuments(collection._self,{}).toArray((err, results) => {
+          client.queryDocuments(collection._self, query, { enableCrossPartitionQuery: true }).toArray((err, results) => {
                 if(err) {
                     reject(err);
                 } else {

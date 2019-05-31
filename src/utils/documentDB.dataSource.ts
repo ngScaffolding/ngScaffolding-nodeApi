@@ -58,13 +58,13 @@ export class DocumentDBCommandHandler {
           var docDB = new DocumentDBUtils();
 
           obsCollection.push(
-                    docDB.executeQuery(docDbClient, docDBSource.databaseName, docDBSource.collectionName, replacedCommand)
+            docDB.executeQuery(docDbClient, docDBSource.databaseName, docDBSource.collectionName, replacedCommand)
           );
         });
 
         Promise.all(obsCollection).then(
           results => {
-            resolve(results[0]);
+            resolve({jsonData: results[0]});
           },
           err => {
             reject(err);
