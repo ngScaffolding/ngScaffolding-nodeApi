@@ -9,8 +9,9 @@
     "dev": "npm-run-all copy-assets debug",
     "debug": "tsc-watch --onSuccess \"node dist/index.js\"",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
+    "compile": "tsc -p .",
     "postinstall": "npm-run-all copy-assets build",
-    "build": "node_modules\\.bin\\tsc -p ."
+    "build": "npm-run-all compile copy-assets"
   },
   "devDependencies": {
     "@angular/core": "^6.0.0",
