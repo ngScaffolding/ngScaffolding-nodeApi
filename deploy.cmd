@@ -106,6 +106,11 @@ call :SelectNodeVersion
 :: 3. Install npm packages
 IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   pushd "%DEPLOYMENT_TARGET%"
+  
+  :: Install ts-node globally
+  call :ExecuteCmd !NPM_CMD! install ts-node -g
+  IF !ERRORLEVEL! NEQ 0 goto error
+
   call :ExecuteCmd !NPM_CMD! install --production
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
