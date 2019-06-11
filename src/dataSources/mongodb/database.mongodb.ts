@@ -156,9 +156,8 @@ export class Database {
   //
   // //////////////////////////////////////////////////////////////////
 
-  public async getReferenceValueByName(name: string): Promise<ReferenceValue> {
-    const menuItem = await ReferenceValueModel.findOne({ name: name });
-    return menuItem;
+  public getReferenceValueByName(name: string): Promise<ReferenceValue> {
+    return ReferenceValueModel.findOne({ name: name });
   }
 
   public async saveReferenceValue(referenceValue: ReferenceValue) {
