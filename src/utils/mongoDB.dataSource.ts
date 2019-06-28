@@ -51,12 +51,12 @@ export class MongoDBCommandHandler {
                 let replacedCommandString: string;
                 // Mongodb call is either find or aggregate
                 if (mongoDBSource.find) {
-                  replacedCommandString = DataSourceHelper.replaceValuesInString(JSON.stringify(mongoDBSource.find), inputDetails);
+                  replacedCommandString = DataSourceHelper.replaceValuesInString(mongoDBSource.find), inputDetails);
                   replacedCommandString = DataSourceHelper.replaceValuesInString(replacedCommandString, currentRow);
 
                   obsCollection.push(this.runFind(mongoClient, mongoDBSource.databaseName, mongoDBSource.collectionName, JSON.parse(replacedCommandString)));
                 } else if (mongoDBSource.aggregatePipeLine) {
-                  replacedCommandString = DataSourceHelper.replaceValuesInString(JSON.stringify(mongoDBSource.aggregatePipeLine), inputDetails);
+                  replacedCommandString = DataSourceHelper.replaceValuesInString(mongoDBSource.aggregatePipeLine, inputDetails);
                   replacedCommandString = DataSourceHelper.replaceValuesInString(replacedCommandString, currentRow);
                 }
 
