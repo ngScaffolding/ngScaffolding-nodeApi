@@ -54,6 +54,7 @@
     "highcharts": "^6.1.1",
     "jsonwebtoken": "^8.3.0",
     "minimist": "^1.2.0",
+    "mongodb": "^3.2.7",
     "mongoose": "^5.1.7",
     "morgan": "^1.9.0",
     "mssql": "^4.2.1",

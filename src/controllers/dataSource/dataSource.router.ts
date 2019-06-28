@@ -5,6 +5,7 @@ import { RESTApiHandler } from '../../utils/restApi.dataSource';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';
 import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
+import { MongoDBCommandHandler } from '../../utils/mongoDB.dataSource';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 const winston = require('../../config/winston');
@@ -55,6 +56,23 @@ export class DataSourceRouter {
             }
 
             case DataSourceTypes.MongoDB: {
+              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+              MongoDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
+                .then(
+                  dataResults => {
+                    dataResults.expiresSeconds = dataSouorce.expires;
+                    capRes.json(dataResults);
+                  },
+                  err => {
+                    winston.error(err);
+                    capRes.status(500).send('Call failed');
+                  }
+                )
+                .catch(err => {
+                  winston.error(err);
+                  capRes.status(500).send('Call failed');
+                });
               break;
             }
 
