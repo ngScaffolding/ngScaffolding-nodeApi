@@ -1,5 +1,5 @@
-import {Document, Schema} from 'mongoose'
-import { BaseDataSource } from '@ngscaffolding/models';
+import { Document, Schema } from 'mongoose'
+import { BaseDataSource } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

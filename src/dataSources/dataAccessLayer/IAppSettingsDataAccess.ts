@@ -1,4 +1,4 @@
-import { AppSettingsValue } from '@ngscaffolding/models';
+import { AppSettingsValue } from '../../models/src/index';
 
 export interface IAppSettingsDataAccess {
 

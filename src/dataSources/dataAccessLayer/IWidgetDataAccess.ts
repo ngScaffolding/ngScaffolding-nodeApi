@@ -1,4 +1,4 @@
-import { WidgetModelBase } from '@ngscaffolding/models';
+import { WidgetModelBase } from '../../models/src/index';
 
 export interface IWidgetDataAccess {
     getWidget(name: string): Promise<WidgetModelBase>;

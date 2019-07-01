@@ -10,8 +10,7 @@ import {
   WidgetModelBase,
   AppSettingsValue,
   Role
-} from '@ngscaffolding/models';
-import { stringify } from 'querystring';
+} from '../../models/src/index';
 
 var azure = require('azure-storage');
 

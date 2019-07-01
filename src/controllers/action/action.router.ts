@@ -7,7 +7,7 @@ import {
   DataResults,
   ActionResultModel,
   ActionRequestModel
-} from '@ngscaffolding/models';
+} from '../../models/src/index';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 

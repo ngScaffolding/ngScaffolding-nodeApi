@@ -11,11 +11,10 @@ import {
   WidgetModelBase,
   AppSettingsValue,
   Role
-} from '@ngscaffolding/models';
+} from '../../models/src/index';
 import { DB } from './database.mongodb';
 import { IApplicationLog } from './models/applicationLog.model';
 import { IError } from './models/error.model';
-import { IReferenceValue } from './models/referenceValue.model';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
   // Application Log

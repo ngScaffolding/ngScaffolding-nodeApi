@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { WidgetModelBase, InputBuilderDefinition } from '@ngscaffolding/models';
+import { WidgetModelBase } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

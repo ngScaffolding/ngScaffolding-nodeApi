@@ -1,15 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import {
-  DataSourceRequest,
-  BaseDataSource,
-  RestApiDataSource,
-  DataResults,
-  ActionResultModel,
-  UserPreferenceValue,
-  BasicUser,
-  Role
-} from '@ngscaffolding/models';
+import { BasicUser, Role } from '../../models/src/index';
 
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 

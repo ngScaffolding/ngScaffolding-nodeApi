@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { ReferenceValue, ReferenceValueItem } from '@ngscaffolding/models';
+import { ReferenceValue } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

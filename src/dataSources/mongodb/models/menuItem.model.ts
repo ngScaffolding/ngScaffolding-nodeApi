@@ -1,5 +1,5 @@
 import {Document, Schema} from 'mongoose'
-import { CoreMenuItem } from '@ngscaffolding/models';
+import { CoreMenuItem } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

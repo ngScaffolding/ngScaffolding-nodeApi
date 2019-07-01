@@ -1,4 +1,4 @@
-import { UserPreferenceDefinition } from '@ngscaffolding/models';
+import { UserPreferenceDefinition } from '../../models/src/index';
 
 export interface IUserPreferenceDefinitionDataAccess {
 

@@ -1,4 +1,4 @@
-import { BaseDataSource } from '@ngscaffolding/models';
+import { BaseDataSource } from '../../models/src/index';
 
 export interface IDataSourceDataAccess {
     getDataSource(name: string|string[]): Promise<BaseDataSource>;

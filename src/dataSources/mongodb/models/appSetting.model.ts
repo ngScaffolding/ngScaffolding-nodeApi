@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { AppSettingsValue } from '@ngscaffolding/models';
+import { AppSettingsValue } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

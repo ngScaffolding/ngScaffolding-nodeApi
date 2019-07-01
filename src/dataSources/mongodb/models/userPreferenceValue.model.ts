@@ -1,5 +1,5 @@
-import {Document, Schema} from 'mongoose'
-import { UserPreferenceValue } from '@ngscaffolding/models';
+import { Document, Schema } from 'mongoose'
+import { UserPreferenceValue } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 
