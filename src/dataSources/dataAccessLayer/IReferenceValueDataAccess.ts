@@ -1,4 +1,4 @@
-import { ReferenceValue } from '@ngscaffolding/models';
+import { ReferenceValue } from '../../models/src/index';
 
 export interface IReferenceValueDataAccess {
   getReferenceValue(name: string): Promise<ReferenceValue>;

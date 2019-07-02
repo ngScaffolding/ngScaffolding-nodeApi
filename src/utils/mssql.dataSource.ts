@@ -1,10 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import {
-  SqlDataSource,
-  DataResults,
-  NameValuePair
-} from '@ngscaffolding/models';
-import { config } from 'mssql';
+import { SqlDataSource, DataResults } from '../models/src/index';
 import { DataSourceHelper } from './dataSource.helper';
 
 require('dotenv').config();

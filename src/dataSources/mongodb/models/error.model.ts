@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { ErrorModel } from '@ngscaffolding/models';
+import { ErrorModel } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

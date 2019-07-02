@@ -1,4 +1,4 @@
-import { BasicUser, CoreMenuItem } from "@ngscaffolding/models";
+import { BasicUser, CoreMenuItem } from "../models/src/index";
 
 export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
 

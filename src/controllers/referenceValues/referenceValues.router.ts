@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { ReferenceValue, BaseDataSource, ReferenceValueItem, RestApiDataSource, DataSourceTypes } from '@ngscaffolding/models';
+import { ReferenceValue, DataSourceTypes } from '../../models/src/index';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 

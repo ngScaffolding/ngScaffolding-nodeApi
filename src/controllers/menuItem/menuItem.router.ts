@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { CoreMenuItem, BasicUser, DashboardModel } from '@ngscaffolding/models';
+import { CoreMenuItem, BasicUser, DashboardModel } from '../../models/src/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import { checkUser } from '../../auth/checkUser';
 

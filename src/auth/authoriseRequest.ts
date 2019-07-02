@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { BasicUser } from '@ngscaffolding/models';
+import { BasicUser } from '../models/src/index';
 var jwt = require('jsonwebtoken');
 
 require('dotenv').config();

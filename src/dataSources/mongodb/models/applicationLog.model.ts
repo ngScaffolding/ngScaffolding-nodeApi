@@ -1,5 +1,5 @@
 import {Document, Schema} from 'mongoose'
-import { ApplicationLog } from '@ngscaffolding/models';
+import { ApplicationLog } from '../../../models/src/index';
 
 const mongoose = require('mongoose');
 

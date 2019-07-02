@@ -1,12 +1,10 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { DataResults, MongoDBDataSource } from '@ngscaffolding/models';
+import { DataResults, MongoDBDataSource } from '../models/src/index';
 import { DataSourceHelper } from './dataSource.helper';
-import { DocumentDBUtils } from './documentDB.utils';
 import { MongoClient, MongoClientOptions, FilterQuery } from 'mongodb';
 
 require('dotenv').config();
 var DataSourceSwitch = require('../dataSourceSwitch');
-var DocumentDBClient = require('documentdb').DocumentClient;
 
 var winston = require('../config/winston');
 

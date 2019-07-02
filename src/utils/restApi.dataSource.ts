@@ -1,8 +1,7 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { RestApiDataSource, DataResults, NameValuePair } from '@ngscaffolding/models';
+import { RestApiDataSource, DataResults } from '../models/src/index';
 import { DataSourceHelper } from './dataSource.helper';
 import { Options } from 'request';
-import { Collection } from 'mongoose';
 
 var DataSourceSwitch = require('../dataSourceSwitch');
 

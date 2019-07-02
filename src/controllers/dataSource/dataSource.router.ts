@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { DataSourceRequest, BaseDataSource, RestApiDataSource, DataResults, SqlDataSource, DataSourceTypes } from '@ngscaffolding/models';
+import { DataSourceRequest, DataSourceTypes } from '../../models/src/index';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';

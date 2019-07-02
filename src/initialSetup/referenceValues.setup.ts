@@ -1,5 +1,4 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { BaseDataSource, RestApiDataSource, DataSourceTypes, SystemDataSourceNames } from '@ngscaffolding/models';
 
 var DataSourceSwitch = require('../dataSourceSwitch');
 

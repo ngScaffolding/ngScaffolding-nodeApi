@@ -1,18 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import {
-  DataSourceRequest,
-  BaseDataSource,
-  RestApiDataSource,
-  DataResults,
-  ActionResultModel,
-  UserPreferenceValue,
-  BasicUser
-} from '@ngscaffolding/models';
 
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
-
-const request = require('request');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 

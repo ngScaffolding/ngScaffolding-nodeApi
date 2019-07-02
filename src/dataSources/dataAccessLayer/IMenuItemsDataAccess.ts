@@ -1,4 +1,4 @@
-import { CoreMenuItem } from '@ngscaffolding/models';
+import { CoreMenuItem } from '../../models/src/index';
 
 export interface IMenuItemsDataAccess {
 
