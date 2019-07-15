@@ -9,7 +9,7 @@ export class DefaultRouter {
   }
 
   public async testRunning(req: Request, res: Response, next: NextFunction) {
-    res.render('default', { title: 'node OAuth Running' });
+    res.render('default', { title: 'node Web API Running' });
   }
 
   init() {
