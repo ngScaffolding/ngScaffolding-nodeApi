@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import {  UserPreferenceValue, BasicUser } from '../../models/src/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
+import isUserInRole from '../../auth/authoriseRoles';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
@@ -39,10 +40,28 @@ export class UserPreferenceValueRouter {
 
   }
 
+  public getAllProfiles(req: Request, res: Response, next: NextFunction) {
+    var userPreferenceValue = req.body as UserPreferenceValue;
+    let capRes: any = res;
+
+    let user = req['userDetails'] as BasicUser;
+    userPreferenceValue.userId = user.userId;
+
+    var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+
+    dataAccess.getAllProfiles().then(prefValues => {
+      capRes.json(prefValues);
+    });
+
+  }
+
 
   init() {
     this.router.get('/', this.getValues);
     this.router.post('/', this.saveValue);
+
+    // Get All (For Admin)
+    this.router.post('/profiles', isUserInRole('admin'),this.getAllProfiles);
   }
 }
 

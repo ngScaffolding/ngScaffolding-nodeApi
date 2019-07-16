@@ -1,16 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import {
-  BaseDataSource,
-  ApplicationLog,
-  CoreMenuItem,
-  ErrorModel,
-  UserPreferenceDefinition,
-  ReferenceValue,
-  UserPreferenceValue,
-  WidgetModelBase,
-  AppSettingsValue,
-  Role
-} from '../../models/src/index';
+import { BaseDataSource, ApplicationLog, CoreMenuItem, ErrorModel, UserPreferenceDefinition, ReferenceValue, UserPreferenceValue, WidgetModelBase, AppSettingsValue, Role } from '../../models/src/index';
 
 var azure = require('azure-storage');
 
@@ -417,20 +406,19 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     var tableService = azure.createTableService();
 
     return new Promise<ReferenceValue>((resolve, reject) => {
-      
-        // Just get by name
-        tableService.retrieveEntity(`${this.tablePrefix}referencevalues`, '', name, (error, result, response) => {
-          if (!error) {
-            try {
-              const entity = JSON.parse(result.data['_']);
-              resolve(entity);
-            } catch (error) {
-              reject(error);
-            }
-          } else {
-            resolve(null);
+      // Just get by name
+      tableService.retrieveEntity(`${this.tablePrefix}referencevalues`, '', name, (error, result, response) => {
+        if (!error) {
+          try {
+            const entity = JSON.parse(result.data['_']);
+            resolve(entity);
+          } catch (error) {
+            reject(error);
           }
-        });
+        } else {
+          resolve(null);
+        }
+      });
     });
   }
   saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
@@ -498,7 +486,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
 
-  saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition>{
+  saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition> {
     var tableService = azure.createTableService();
 
     return new Promise<UserPreferenceDefinition>((resolve, reject) => {
@@ -536,6 +524,32 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
 
+  getAllProfiles(): Promise<UserPreferenceValue[]> {
+    var tableService = azure.createTableService();
+    var query = new azure.TableQuery().where('');
+
+    return new Promise<UserPreferenceValue[]>((resolve, reject) => {
+      tableService.queryEntities(`${this.tablePrefix}userpreferencevalues`, query, null, (error, results, response) => {
+        if (!error) {
+          try {
+            let returnValues: UserPreferenceValue[] = [];
+            results.entries.forEach(result => {
+              if (result.RowKey['_'].endsWith('UserPrefs_Profile')) {
+                const entity: UserPreferenceValue = JSON.parse(result.data['_']);
+                const decoded = JSON.parse(entity.value);
+                returnValues.push(decoded);
+              }
+            });
+            resolve(returnValues);
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject(error);
+        }
+      });
+    });
+  }
 
   getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     var tableService = azure.createTableService();
@@ -568,9 +582,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       this.getUserPreferenceValues(userPreference.userId).then(prefs => {
         const searchKey = this.getUserPrefKey(userPreference.userId, userPreference.name);
 
-        let existingPref = prefs.find(
-          pref => pref.name.toLowerCase() === userPreference.name.toLowerCase() && pref.userId.toLowerCase() === userPreference.userId.toLowerCase()
-        );
+        let existingPref = prefs.find(pref => pref.name.toLowerCase() === userPreference.name.toLowerCase() && pref.userId.toLowerCase() === userPreference.userId.toLowerCase());
         if (existingPref) {
           var entity = {
             PartitionKey: '',

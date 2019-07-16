@@ -6,4 +6,7 @@ export interface IUserPreferenceValueDataAccess {
     getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]>;
     saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue>;
     deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<any>;
+
+    getAllProfiles(): Promise<UserPreferenceValue[]>;
+
 }

@@ -17,6 +17,10 @@ import { IApplicationLog } from './models/applicationLog.model';
 import { IError } from './models/error.model';
 
 export class MongoDBDataAccess implements IDataAccessLayer {
+  getAllProfiles(): Promise<UserPreferenceValue[]> {
+    throw new Error("Method not implemented.");
+  }
+  
   // Application Log
   public saveApplicationLog(applictionLog: ApplicationLog): Promise<ApplicationLog> {
     return new Promise<ApplicationLog>((resolve, reject) => {
