@@ -3,6 +3,10 @@ import { ReferenceValue, DataSourceTypes } from '../../models/src/index';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 
+import { SQLCommandHandler } from '../../utils/mssql.dataSource';
+import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
+import { MongoDBCommandHandler } from '../../utils/mongoDB.dataSource';
+
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
 export class ReferenceValuesRouter {
@@ -56,6 +60,27 @@ export class ReferenceValuesRouter {
         ds.dataSource.getDataSource(refValue.dataSourceName).then(
           dataSouorce => {
             switch (dataSouorce.type) {
+              case DataSourceTypes.SQL: {
+                SQLCommandHandler.runCommand(refValue.dataSourceName, { seed: seed }).then(dataResults => {
+                  if (!dataResults) {
+                    reject();
+                  } else {
+                    let returnedItems: any[] = dataResults.jsonData;
+                    refValue.referenceValueItems = [];
+                    let idCount = 0;
+                    returnedItems.forEach(item => {
+                      refValue.referenceValueItems.push({
+                        value: item[refValue.valueProperty],
+                        display: item[refValue.displayProperty],
+                        // itemOrder: item[refValue.itemOrderProperty],
+                        // subtitle: item[refValue.subtitleProperty]
+                      });
+                    });
+                    resolve(refValue);
+                  }
+                });
+                break;
+              }
               case DataSourceTypes.RestApi: {
                 RESTApiHandler.runCommand(refValue.dataSourceName, { seed: seed }, null, authHeader).then(dataResults => {
                   if (!dataResults) {
