@@ -13,6 +13,10 @@ export interface IDataSourceSwitch{
 
 class DataSourceSwitch {
     constructor() {
+        if(!process.env.DATA_SOURCE){
+            winston.error('Missing DATA_SOURCE in Env Variables. Exiting');
+            process.exit(1);
+        }
         switch(process.env.DATA_SOURCE.toLowerCase()){
             case 'mongodb':{
                 winston.info('Running MongoDB Data Source');
