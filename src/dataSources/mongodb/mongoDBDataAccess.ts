@@ -139,8 +139,8 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
     return DB.saveUserPreferenceValue(userPreference);
   }
-  deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    return DB.deleteUserPreferenceValue(userPreference);
+  deleteUserPreferenceValue(userId: string, name: string): Promise<UserPreferenceValue> {
+    return DB.deleteUserPreferenceValue(userId, name);
   }
   getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
     

@@ -198,15 +198,14 @@ export class Database {
   }
 
   public async saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    const newValue = await UserPreferenceValueModel.findOneAndUpdate({ name: userPreference.name, userId: userPreference.userId }, userPreference, {
-      upsert: true,
-      new: true
+    const newValue = await UserPreferenceValueModel.update({ name: userPreference.name, userId: userPreference.userId }, userPreference, {
+      upsert: true
     });
     return newValue;
   }
 
-  public async deleteUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    const newValue = await UserPreferenceValueModel.deleteOne({ name: userPreference.name, userId: userPreference.userId });
+  public async deleteUserPreferenceValue(userId: string, name: string): Promise<UserPreferenceValue> {
+    const newValue = await UserPreferenceValueModel.deleteOne({ name: name, userId: userId });
     return newValue;
   }
 

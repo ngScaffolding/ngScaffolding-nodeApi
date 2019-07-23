@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import {  UserPreferenceValue, BasicUser } from '../../models/src/index';
+import { UserPreferenceValue, BasicUser } from '../../models/src/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import isUserInRole from '../../auth/authoriseRoles';
 
@@ -21,10 +21,13 @@ export class UserPreferenceValueRouter {
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
     dataAccess.getUserPreferenceValues(user.userId).then(defValues => {
-      capRes.json(defValues);
+      capRes.json(defValues)
+      .catch(err => {
+        capRes.sendStatus(500);
+      });
     });
   }
-  
+
   public saveValue(req: Request, res: Response, next: NextFunction) {
     var userPreferenceValue = req.body as UserPreferenceValue;
     let capRes: any = res;
@@ -34,10 +37,32 @@ export class UserPreferenceValueRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.saveUserPreferenceValue(userPreferenceValue).then(prefValues => {
-      capRes.json(prefValues);
-    });
+    dataAccess
+      .saveUserPreferenceValue(userPreferenceValue)
+      .then(prefValues => {
+        capRes.json(prefValues);
+      })
+      .catch(err => {
+        capRes.sendStatus(500);
+      });
+  }
 
+  public deleteValue(req: Request, res: Response, next: NextFunction) {
+    const name = req.query.name;
+    let capRes: any = res;
+
+    let user = req['userDetails'] as BasicUser;
+
+    var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
+
+    dataAccess
+      .deleteUserPreferenceValue(user.userId, name)
+      .then(prefValues => {
+        capRes.json(prefValues);
+      })
+      .catch(err => {
+        capRes.sendStatus(500);
+      });
   }
 
   public getAllProfiles(req: Request, res: Response, next: NextFunction) {
@@ -51,17 +76,18 @@ export class UserPreferenceValueRouter {
 
     dataAccess.getAllProfiles().then(prefValues => {
       capRes.json(prefValues);
+    }).catch(err => {
+      capRes.sendStatus(500);
     });
-
   }
-
 
   init() {
     this.router.get('/', this.getValues);
     this.router.post('/', this.saveValue);
+    this.router.delete('/', this.deleteValue);
 
     // Get All (For Admin)
-    this.router.post('/profiles', isUserInRole('admin'),this.getAllProfiles);
+    this.router.post('/profiles', isUserInRole('admin'), this.getAllProfiles);
   }
 }
 

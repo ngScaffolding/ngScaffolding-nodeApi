@@ -9,7 +9,7 @@ export interface IUserPreferenceValue extends UserPreferenceValue, Document {
 
 const UserPreferenceValueSchema = new Schema({
     userId: String,
-    definitionName: String,
+    name: String,
     value: String, },
     { timestamps: true });
 
