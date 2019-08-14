@@ -4,15 +4,7 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import {
-  ReferenceValue,
-  UserPreferenceValue,
-  AppSettingsValue,
-  Role,
-  CoreMenuItem,
-  UserPreferenceDefinition,
-  BaseDataSource
-} from '../../models/src/index';
+import { ReferenceValue, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem, UserPreferenceDefinition, BaseDataSource } from '../../models/src/index';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { UserPreferenceValueModel } from './models/userPreferenceValue.model';
@@ -30,42 +22,45 @@ export class Database {
   private static _database: Database;
 
   private constructor() {
-    mongoose.Promise = global.Promise;
+    // Only run on mongodb Data Source
+    if (process.env.DATA_SOURCE === 'mongodb') {
+      mongoose.Promise = global.Promise;
 
-    let options: ConnectionOptions = <ConnectionOptions>{
-      promiseLibrary: global.Promise,
-      useNewUrlParser: true
-    };
+      let options: ConnectionOptions = <ConnectionOptions>{
+        promiseLibrary: global.Promise,
+        useNewUrlParser: true
+      };
 
-    //TODO: Need to stop this connection
-    if (process.env.DB_HOST) {
-      mongoose.connect(process.env.DB_HOST, options).catch((err: Error) => {
-        winston.error(err, `Error connecting to Mongodb`);
+      //TODO: Need to stop this connection
+      if (process.env.DB_HOST) {
+        mongoose.connect(process.env.DB_HOST, options).catch((err: Error) => {
+          winston.error(err, `Error connecting to Mongodb`);
+        });
+      }
+
+      // When successfully connected
+      mongoose.connection.on('connected', () => {
+        winston.info('Mongoose default connection open to ', process.env.DB_HOST);
+      });
+
+      // If the connection throws an error
+      mongoose.connection.on('error', err => {
+        winston.error(err, 'Mongoose default connection error');
+      });
+
+      // When the connection is disconnected
+      mongoose.connection.on('disconnected', () => {
+        winston.error('Mongoose default connection disconnected');
+      });
+
+      // If the Node process ends, close the Mongoose connection
+      process.on('SIGINT', () => {
+        mongoose.connection.close(() => {
+          winston.info('Mongoose default connection disconnected through app termination');
+          process.exit(0);
+        });
       });
     }
-
-    // When successfully connected
-    mongoose.connection.on('connected', () => {
-      winston.info('Mongoose default connection open to ', process.env.DB_HOST);
-    });
-
-    // If the connection throws an error
-    mongoose.connection.on('error', err => {
-      winston.error(err, 'Mongoose default connection error: ');
-    });
-
-    // When the connection is disconnected
-    mongoose.connection.on('disconnected', () => {
-      winston.error('Mongoose default connection disconnected');
-    });
-
-    // If the Node process ends, close the Mongoose connection
-    process.on('SIGINT', () => {
-      mongoose.connection.close(() => {
-        winston.info('Mongoose default connection disconnected through app termination');
-        process.exit(0);
-      });
-    });
   }
 
   static get instance() {
@@ -157,8 +152,7 @@ export class Database {
   }
 
   public async saveReferenceValue(referenceValue: ReferenceValue) {
-    const newItem = await ReferenceValueModel
-      .findOneAndUpdate({ name: referenceValue.name }, referenceValue, { upsert: true, new: true });
+    const newItem = await ReferenceValueModel.findOneAndUpdate({ name: referenceValue.name }, referenceValue, { upsert: true, new: true });
     return newItem;
   }
 

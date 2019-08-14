@@ -2,6 +2,7 @@ import { IDataAccessLayer  } from './dataSources/dataAccessLayer';
 import { MongoDBDataAccess } from './dataSources/mongodb/mongoDBDataAccess';
 import { DocumentDBDataAccess } from './dataSources/documentdb';
 import { AzureStorageDataAccess } from './dataSources/azureStorage';
+import { MsSQLDataAccess } from './dataSources/mssql/msSQLDataAccess';
 
 require('dotenv').config();
 
@@ -31,6 +32,11 @@ class DataSourceSwitch {
             case 'documentdb':{
                 winston.info('Running DocumentDB Data Source');
                 // this.dataSource = new DocumentDBDataAccess();
+                break;
+            }
+            case 'mssql':{
+                winston.info('Running MS SQL Data Source');
+                this.dataSource = new MsSQLDataAccess();
                 break;
             }
         }

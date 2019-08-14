@@ -10,6 +10,7 @@ export class MSSQLHelpers {
       if (!input || input.toString() === 'null') {
         return null;
       } else {
+        input = input.toString().replace(/'/g, "''");
         return `'${input}'`;
       }
     }

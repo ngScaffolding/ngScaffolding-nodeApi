@@ -20,12 +20,14 @@ export class UserPreferenceValueRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getUserPreferenceValues(user.userId).then(defValues => {
-      capRes.json(defValues)
+    dataAccess
+      .getUserPreferenceValues(user.userId)
+      .then(defValues => {
+        capRes.json(defValues);
+      })
       .catch(err => {
         capRes.sendStatus(500);
       });
-    });
   }
 
   public saveValue(req: Request, res: Response, next: NextFunction) {
@@ -74,11 +76,14 @@ export class UserPreferenceValueRouter {
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    dataAccess.getAllProfiles().then(prefValues => {
-      capRes.json(prefValues);
-    }).catch(err => {
-      capRes.sendStatus(500);
-    });
+    dataAccess
+      .getAllProfiles()
+      .then(prefValues => {
+        capRes.json(prefValues);
+      })
+      .catch(err => {
+        capRes.sendStatus(500);
+      });
   }
 
   init() {

@@ -27,6 +27,11 @@ export class SQLCommandHandler {
             connString = process.env[sqlDataSource.connection];
         }
 
+        if(!connString){
+          reject('Missing Connection String');
+          return;
+        }
+
         // Return value ready
         let dataResults: DataResults = {
           expiresSeconds: 0,
