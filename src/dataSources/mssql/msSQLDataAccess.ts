@@ -190,7 +190,14 @@ export class MsSQLDataAccess implements IDataAccessLayer {
     });
   }
   deleteUserPreferenceValue(userId: string, name: string): Promise<any> {
-    throw new Error('Method not implemented.');
+    return new Promise((resolve, reject) => {
+      this.runCommand(
+        `DELETE  FROM [dbo].[${this.tablePrefix}UserPreferenceValues]
+          WHERE [KeyName] like '${userId}::%'`
+      ).then(results => {
+        resolve(null);
+      });
+    });
   }
   getAllProfiles(): Promise<UserPreferenceValue[]> {
     throw new Error('Method not implemented.');
