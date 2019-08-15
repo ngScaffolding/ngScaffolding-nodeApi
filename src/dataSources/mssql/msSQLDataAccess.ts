@@ -191,9 +191,10 @@ export class MsSQLDataAccess implements IDataAccessLayer {
   }
   deleteUserPreferenceValue(userId: string, name: string): Promise<any> {
     return new Promise((resolve, reject) => {
+      var key = this.getUserPrefKey(userId, name);
       this.runCommand(
         `DELETE  FROM [dbo].[${this.tablePrefix}UserPreferenceValues]
-          WHERE [KeyName] like '${userId}::%'`
+          WHERE [KeyName] = '${key}'`
       ).then(results => {
         resolve(null);
       });

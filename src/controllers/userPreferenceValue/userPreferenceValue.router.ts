@@ -50,7 +50,7 @@ export class UserPreferenceValueRouter {
   }
 
   public deleteValue(req: Request, res: Response, next: NextFunction) {
-    const name = req.query.name;
+    const name = req.params.name;
     let capRes: any = res;
 
     let user = req['userDetails'] as BasicUser;
@@ -89,7 +89,7 @@ export class UserPreferenceValueRouter {
   init() {
     this.router.get('/', this.getValues);
     this.router.post('/', this.saveValue);
-    this.router.delete('/', this.deleteValue);
+    this.router.delete('/:name', this.deleteValue);
 
     // Get All (For Admin)
     this.router.post('/profiles', isUserInRole('admin'), this.getAllProfiles);
