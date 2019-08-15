@@ -175,7 +175,7 @@ export class MsSQLDataAccess implements IDataAccessLayer {
       var key = this.getUserPrefKey(userPreference.userId, userPreference.name);
       this.runCommand(
         `IF EXISTS (SELECT * from [UserPreferenceValues] WHERE [KeyName] = '${key}')
-        UPDATE [dbo].[UserPreferenceValues] SET [Value] = ${MSSQLHelpers.valueWithQuotesOrNull(userPreference.value)} WHERE  Name = '${key}'
+        UPDATE [dbo].[UserPreferenceValues] SET [Value] = ${MSSQLHelpers.valueWithQuotesOrNull(userPreference.value)} WHERE [KeyName] = '${key}'
           ELSE
         INSERT INTO [dbo].[UserPreferenceValues] ([KeyName],[Name],[Value]) VALUES ('${key}', ${MSSQLHelpers.valueWithQuotesOrNull(userPreference.name)}, ${MSSQLHelpers.valueWithQuotesOrNull(userPreference.value)})`
       ).then(results => {
