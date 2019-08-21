@@ -1,4 +1,4 @@
-import { BasicUser, CoreMenuItem } from "../models/src/index";
+import { BasicUser, CoreMenuItem } from "../models/index";
 
 export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
 

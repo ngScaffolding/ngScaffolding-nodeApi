@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { AppSettingsValue } from '../../../models/src/index';
+import { AppSettingsValue } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

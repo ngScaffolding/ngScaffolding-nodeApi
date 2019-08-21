@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { RestApiDataSource, DataSourceTypes, SystemDataSourceNames } from '../models/src/index';
+import { RestApiDataSource, DataSourceTypes, SystemDataSourceNames } from '../models/index';
 
 var DataSourceSwitch = require('../dataSourceSwitch');
 

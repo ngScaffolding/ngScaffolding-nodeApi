@@ -7,7 +7,7 @@ import {
   DataResults,
   ActionResultModel,
   ActionRequestModel
-} from '../../models/src/index';
+} from '../../models/index';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 

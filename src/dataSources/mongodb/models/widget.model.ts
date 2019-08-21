@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { WidgetModelBase } from '../../../models/src/index';
+import { WidgetModelBase } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

@@ -1,5 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { ApplicationLog, BaseDataSource, ErrorModel, CoreMenuItem, ReferenceValue, UserPreferenceDefinition, UserPreferenceValue, WidgetModelBase, AppSettingsValue, Role } from '../../models/src/index';
+import { ApplicationLog, BaseDataSource, ErrorModel, CoreMenuItem, ReferenceValue, UserPreferenceDefinition, UserPreferenceValue, WidgetModelBase, AppSettingsValue, Role } from '../../models/index';
 import { MSSQLHelpers } from './msSQLHelpers';
 
 const sql = require('mssql');

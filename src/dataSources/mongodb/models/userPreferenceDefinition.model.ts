@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { UserPreferenceDefinition } from '../../../models/src/index';
+import { UserPreferenceDefinition } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

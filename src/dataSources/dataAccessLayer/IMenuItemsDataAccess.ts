@@ -1,4 +1,4 @@
-import { CoreMenuItem } from '../../models/src/index';
+import { CoreMenuItem } from '../../models/index';
 
 export interface IMenuItemsDataAccess {
 

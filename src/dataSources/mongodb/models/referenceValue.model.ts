@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { ReferenceValue } from '../../../models/src/index';
+import { ReferenceValue } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { ErrorModel } from '../../models/src/index';
+import { ErrorModel } from '../../models/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 
 const request = require('request');

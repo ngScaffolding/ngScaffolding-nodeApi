@@ -1,4 +1,4 @@
-import { UserPreferenceValue } from '../../models/src/index';
+import { UserPreferenceValue } from '../../models/index';
 
 export interface IUserPreferenceValueDataAccess {
 

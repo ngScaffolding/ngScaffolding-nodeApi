@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { ReferenceValue, DataSourceTypes } from '../../models/src/index';
+import { ReferenceValue, DataSourceTypes } from '../../models/index';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 

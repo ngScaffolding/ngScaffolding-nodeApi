@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { UserPreferenceValue, BasicUser } from '../../models/src/index';
+import { UserPreferenceValue, BasicUser } from '../../models/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import isUserInRole from '../../auth/authoriseRoles';
 

@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { SqlDataSource, DataResults } from '../models/src/index';
+import { SqlDataSource, DataResults } from '../models/index';
 import { DataSourceHelper } from './dataSource.helper';
 
 require('dotenv').config();

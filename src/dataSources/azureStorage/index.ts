@@ -1,5 +1,5 @@
 import { IDataAccessLayer } from '../dataAccessLayer';
-import { BaseDataSource, ApplicationLog, CoreMenuItem, ErrorModel, UserPreferenceDefinition, ReferenceValue, UserPreferenceValue, WidgetModelBase, AppSettingsValue, Role } from '../../models/src/index';
+import { BaseDataSource, ApplicationLog, CoreMenuItem, ErrorModel, UserPreferenceDefinition, ReferenceValue, UserPreferenceValue, WidgetModelBase, AppSettingsValue, Role } from '../../models/index';
 
 var azure = require('azure-storage');
 

@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { Role } from '../../../models/src/index';
+import { Role } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

@@ -1,4 +1,4 @@
-import { BaseDataSource } from '../../models/src/index';
+import { BaseDataSource } from '../../models/index';
 
 export interface IDataSourceDataAccess {
     getDataSource(name: string|string[]): Promise<BaseDataSource>;
