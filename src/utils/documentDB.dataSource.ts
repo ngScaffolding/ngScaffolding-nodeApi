@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { DocumentDBDataSource, DataResults } from '../models/src/index';
+import { DocumentDBDataSource, DataResults } from '../models/index';
 import { DataSourceHelper } from './dataSource.helper';
 import { DocumentDBUtils } from './documentDB.utils';
 

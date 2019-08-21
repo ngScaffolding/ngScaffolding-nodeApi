@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { BaseDataSource } from '../../../models/src/index';
+import { BaseDataSource } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

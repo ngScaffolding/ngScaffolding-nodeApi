@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { BasicUser } from '../models/src/index';
+import { BasicUser } from '../models/index';
 var jwt = require('jsonwebtoken');
 
 require('dotenv').config();

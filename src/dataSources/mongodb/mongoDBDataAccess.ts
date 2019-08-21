@@ -11,7 +11,7 @@ import {
   WidgetModelBase,
   AppSettingsValue,
   Role
-} from '../../models/src/index';
+} from '../../models/index';
 import { DB } from './database.mongodb';
 import { IApplicationLog } from './models/applicationLog.model';
 import { IError } from './models/error.model';

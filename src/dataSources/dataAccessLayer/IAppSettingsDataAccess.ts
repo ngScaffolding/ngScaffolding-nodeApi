@@ -1,4 +1,4 @@
-import { AppSettingsValue } from '../../models/src/index';
+import { AppSettingsValue } from '../../models/index';
 
 export interface IAppSettingsDataAccess {
 

@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose'
-import { ErrorModel } from '../../../models/src/index';
+import { ErrorModel } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { DataResults, MongoDBDataSource } from '../models/src/index';
+import { DataResults, MongoDBDataSource } from '../models/index';
 import { DataSourceHelper } from './dataSource.helper';
 import { MongoClient, MongoClientOptions, FilterQuery } from 'mongodb';
 

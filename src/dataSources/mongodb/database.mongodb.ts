@@ -4,7 +4,7 @@ import { ApplicationLogModel, IApplicationLog } from './models/applicationLog.mo
 import { UserPreferenceDefinitionModel } from './models/userPreferenceDefinition.model';
 import { MenuItemModel, IMenuItem } from './models/menuItem.model';
 import { ReferenceValueModel, IReferenceValue } from './models/referenceValue.model';
-import { ReferenceValue, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem, UserPreferenceDefinition, BaseDataSource } from '../../models/src/index';
+import { ReferenceValue, UserPreferenceValue, AppSettingsValue, Role, CoreMenuItem, UserPreferenceDefinition, BaseDataSource } from '../../models/index';
 import { DataSourceModel, IDataSource } from './models/dataSource.model';
 import { ErrorLogModel, IError } from './models/error.model';
 import { UserPreferenceValueModel } from './models/userPreferenceValue.model';

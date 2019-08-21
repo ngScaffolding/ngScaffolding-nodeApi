@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { RestApiDataSource, DataResults } from '../models/src/index';
+import { RestApiDataSource, DataResults } from '../models/index';
 import { DataSourceHelper } from './dataSource.helper';
 import { Options } from 'request';
 

@@ -3,7 +3,7 @@ import {
   InputDetailDropdown,
   InputTypes,
   InputBuilderDefinition
-} from '../models/src/index';
+} from '../models/index';
 
 var DataSourceSwitch = require('../dataSourceSwitch');
 

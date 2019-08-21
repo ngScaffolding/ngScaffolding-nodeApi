@@ -1,4 +1,4 @@
-import { ReferenceValue } from '../../models/src/index';
+import { ReferenceValue } from '../../models/index';
 
 export interface IReferenceValueDataAccess {
   getReferenceValue(name: string): Promise<ReferenceValue>;

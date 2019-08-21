@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { DataSourceRequest, DataSourceTypes } from '../../models/src/index';
+import { DataSourceRequest, DataSourceTypes } from '../../models/index';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';

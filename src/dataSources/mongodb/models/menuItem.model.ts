@@ -1,5 +1,5 @@
 import {Document, Schema} from 'mongoose'
-import { CoreMenuItem } from '../../../models/src/index';
+import { CoreMenuItem } from '../../../models/index';
 
 const mongoose = require('mongoose');
 

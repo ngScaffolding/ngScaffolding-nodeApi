@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import { UserPreferenceDefinition } from '../../models/src/index';
+import { UserPreferenceDefinition } from '../../models/index';
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
