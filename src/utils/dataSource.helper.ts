@@ -4,31 +4,24 @@ export interface InputAndRows {
 }
 
 export class DataSourceHelper {
-  public static prepareInputAndRows(inputDetails: string, rows: string): InputAndRows {
+  public static prepareInputAndRows(inputDetails: object, rows: object[]): InputAndRows {
     let returnValues = {
       inputDetails: {},
       rows: []
     };
 
-    // Make an array of our input details
     if (rows) {
-      if (rows.startsWith('[') && rows.endsWith(']')) {
-        returnValues.rows = JSON.parse(rows);
-      } else {
-        returnValues.rows.push(JSON.parse(rows));
-      }
+      returnValues.rows = rows;
+    } else {
+      returnValues.rows = [];
     }
 
+    // If empty, make sure there is always one
     if (returnValues.rows.length === 0) {
       returnValues.rows.push({});
     }
 
-    // Decode Input if JSON string
-    if (inputDetails && (typeof inputDetails === 'string')) {
-      returnValues.inputDetails = JSON.parse(inputDetails);
-    } else {
-      returnValues.inputDetails = inputDetails;
-    }
+    returnValues.inputDetails = inputDetails;
     return returnValues;
   }
 
