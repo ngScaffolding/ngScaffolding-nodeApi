@@ -25,7 +25,14 @@ export class DataSourceRouter {
     let capRes = res;
 
     if (dataRequest) {
-
+      // If we have a seed value add it into the inputData
+      if (dataRequest.seed) {
+        if (dataRequest.inputData) {
+          dataRequest.inputData['seed'] = dataRequest.seed;
+        } else {
+          dataRequest.inputData = { seed: dataRequest.seed };
+        }
+      }
       ds.dataSource
         .getDataSource(dataRequest.name)
         .then(dataSouorce => {

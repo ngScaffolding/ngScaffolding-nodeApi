@@ -65,7 +65,7 @@ export class ReferenceValuesRouter {
                   if (!dataResults) {
                     reject();
                   } else {
-                    let returnedItems: any[] = dataResults.jsonData;
+                    let returnedItems: any[] = JSON.parse(dataResults.jsonData);
                     refValue.referenceValueItems = [];
                     let idCount = 0;
                     returnedItems.forEach(item => {

@@ -13,6 +13,7 @@ import DefaultRouter from './defaultRouter';
 import isUserInRole from '../auth/authoriseRoles';
 import WidgetsRouter from '../controllers/widgets/widgets.router';
 import RolesRouter from '../controllers/roles/roles.router';
+import WorkItemsRouter from '../fieldforce/controllers/workItems.controller';
 
 // import ActionRouter from '../controllers/action/action.router';
 // import * as swaggerUi from 'swagger-ui-express';
@@ -43,6 +44,8 @@ export class RouterSetup{
     this.express.use('/api/v1/userpreferencevalue', isUserInRole('user'), UserPreferenceValueRouter);
     this.express.use('/api/v1/widgets', isUserInRole('user'), WidgetsRouter);
     this.express.use('/api/v1/roles', isUserInRole('user'), RolesRouter);
+
+    this.express.use('/api/v1/workitems', WorkItemsRouter);
     this.express.use('/api/v1/error', ErrorRouter);
     
     }
