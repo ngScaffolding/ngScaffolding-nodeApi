@@ -23,7 +23,7 @@ export const enum ActionTypes {
 }
 
 export class Action {
-  id?: number;
+  id: number;
   name?: string;
   type?: ActionTypes; // angularComponent
   title?: string;

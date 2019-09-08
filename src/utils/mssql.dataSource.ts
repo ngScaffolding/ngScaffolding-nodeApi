@@ -58,7 +58,7 @@ export class SQLCommandHandler {
                     return pool.query(replacedCommand);
                 }).then(result => {
                     dataResults.rowCount = result.recordset.length;
-                    dataResults.jsonData = JSON.stringify(result.recordset);
+                    dataResults.jsonData = result.recordset;
 
                     colResolve(dataResults);
                 }).catch(err => {
