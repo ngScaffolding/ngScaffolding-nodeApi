@@ -1,17 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { IDataSourceSwitch } from '../../dataSourceSwitch';
-import {
-  DataSourceRequest,
-  BaseDataSource,
-  RestApiDataSource,
-  DataResults,
-  ActionResultModel,
-  ActionRequestModel
-} from '../../models/index';
+import { DataSourceRequest, ActionRequestModel } from '../../models/index';
+import { dataSourceResolver } from '../../dataSources/dataSource.resolver';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 
 const request = require('request');
+const winston = require('../../config/winston');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 
@@ -23,27 +17,41 @@ export class ActionRouter {
   }
 
   public postAction(req: Request, res: Response, next: NextFunction) {
-    const ds: IDataSourceSwitch = DataSourceSwitch.default;
-
     var actionRequest = req.body as ActionRequestModel;
 
-    var inputAndRows = DataSourceHelper.prepareInputAndRows(actionRequest.inputDetails, actionRequest.rows);
-    
-    switch(actionRequest.action.type.toLowerCase()){
-
-        case 'restapi': {
-            RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows, inputAndRows.inputDetails).then(
-                dataResults =>{ 
-                  res.json({success: true });
-                },
-                err => {}
-            )
-
-            break;
-        }
-    }
+    let dataRequest: DataSourceRequest = {
+      name: actionRequest.action.dataSourceName,
+      inputData: actionRequest.inputDetails,
+      rowData: actionRequest.rows
+    };
 
     let capRes = res;
+
+    dataSourceResolver
+      .resolve(dataRequest, req)
+      .then(dataResults => {
+        capRes.json(dataResults);
+      })
+      .catch(err => {
+        winston.error(err);
+        capRes.status(500).send('Call failed');
+      });
+
+    // var inputAndRows = DataSourceHelper.prepareInputAndRows(actionRequest.inputDetails, actionRequest.rows);
+
+    // switch (actionRequest.action.type.toLowerCase()) {
+    //   case 'restapi': {
+    //     RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows, inputAndRows.inputDetails).then(
+    //       dataResults => {
+    //         res.json({ success: true });
+    //       },
+    //       err => {}
+    //     );
+
+    //     break;
+    //   }
+    // }
+
   }
 
   init() {

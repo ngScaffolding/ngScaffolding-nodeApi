@@ -63,6 +63,8 @@ export class RESTApiHandler {
                   serverUrl = serverUrl + '/';
                 }
                 replacedUrl = `${serverUrl}${replacedUrl}`;
+              } else {
+                reject(`Missing Config in Environment CONN_${apiDataSource.serverName}`);
               }
             }
 
@@ -72,6 +74,7 @@ export class RESTApiHandler {
               url: replacedUrl,
               method: apiDataSource.verb,
               headers: {},
+              json: {},
               timeout: timeoutValue
             };
 
@@ -81,6 +84,7 @@ export class RESTApiHandler {
 
             if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
               if (apiDataSource.bodyValues && apiDataSource.bodyValues.length > 0) {
+
                 // Only copy values that are defined to body
                 apiDataSource.bodyValues.forEach(bodyValue => {
                   // Value coded into bodyValue
@@ -120,13 +124,13 @@ export class RESTApiHandler {
 
             obsCollection.push(
               new Promise<any>((collResolve, colReject) => {
-                request(options, (err, res, body) => {
+                request(options, (err, res, respBody) => {
                   if (err) {
                     colReject(err);
                   } else if (res.statusCode < 200 || res.statusCode > 299) {
                     colReject(new Error(`RESTApi Failed: StatusCode ${res.statusCode}`));
                   } else {
-                    dataResults.jsonData = body;
+                    dataResults.jsonData = respBody;
                     collResolve(dataResults);
                   }
                 });

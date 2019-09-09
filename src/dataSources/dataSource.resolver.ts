@@ -34,6 +34,7 @@ export class dataSourceResolver {
                 .then(
                   dataResults => {
                     dataResults.expiresSeconds = dataSouorce.expires;
+                    dataResults.success = true;
                     resolve(dataResults);
                   },
                   err => {
@@ -57,6 +58,7 @@ export class dataSourceResolver {
                 .then(
                   dataResults => {
                     dataResults.expiresSeconds = dataSouorce.expires;
+                    dataResults.success = true;
                     resolve(dataResults);
                   },
                   err => {
@@ -76,6 +78,7 @@ export class dataSourceResolver {
                 .then(
                   dataResults => {
                     dataResults.expiresSeconds = dataSouorce.expires;
+                    dataResults.success = true;
                     resolve(dataResults);
                   },
                   err => {
@@ -95,6 +98,7 @@ export class dataSourceResolver {
                 .then(
                   dataResults => {
                     dataResults.expiresSeconds = dataSouorce.expires;
+                    dataResults.success = true;
                     resolve(dataResults);
                   },
                   err => {
