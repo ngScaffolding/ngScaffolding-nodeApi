@@ -36,22 +36,6 @@ export class ActionRouter {
         winston.error(err);
         capRes.status(500).send('Call failed');
       });
-
-    // var inputAndRows = DataSourceHelper.prepareInputAndRows(actionRequest.inputDetails, actionRequest.rows);
-
-    // switch (actionRequest.action.type.toLowerCase()) {
-    //   case 'restapi': {
-    //     RESTApiHandler.runCommand(actionRequest.action.dataSourceName, inputAndRows.inputDetails, inputAndRows.rows, inputAndRows.inputDetails).then(
-    //       dataResults => {
-    //         res.json({ success: true });
-    //       },
-    //       err => {}
-    //     );
-
-    //     break;
-    //   }
-    // }
-
   }
 
   init() {
