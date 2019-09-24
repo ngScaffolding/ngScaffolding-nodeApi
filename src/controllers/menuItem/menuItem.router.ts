@@ -27,7 +27,7 @@ export class MenuItemRouter {
         resultsCol => {
           let allMenuItems = resultsCol[0];
 
-          var userMenuItems = allMenuItems.filter(menu => checkUser(userDetails, menu));
+          var userMenuItems = allMenuItems.filter(menu => menu!== null ? checkUser(userDetails, menu): false);
 
           userMenuItems
             .filter(menu => menu.type && menu.type === 'dashboard')
