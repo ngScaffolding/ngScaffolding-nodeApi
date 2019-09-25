@@ -9,7 +9,7 @@ var DataSourceSwitch = require('../dataSourceSwitch');
 const sql = require('mssql');
 
 export class SQLCommandHandler {
-  public static runCommand(dataSourceName: string|string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
+  public static runCommand(dataSourceName: string | string[], inputDetails: any = undefined, rows: any[] = [{}]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
@@ -22,12 +22,12 @@ export class SQLCommandHandler {
         // Load the connection string
         let connString = process.env['CONN_' + sqlDataSource.connection];
 
-        if(!connString) {
-            // If failed Try again without the prefix
-            connString = process.env[sqlDataSource.connection];
+        if (!connString) {
+          // If failed Try again without the prefix
+          connString = process.env[sqlDataSource.connection];
         }
 
-        if(!connString){
+        if (!connString) {
           reject('Missing Connection String');
           return;
         }
@@ -43,30 +43,36 @@ export class SQLCommandHandler {
         // Call API For each Row in rows
         rows.forEach(currentRow => {
           // Replace @@value@@ from inputDetails
-          let replacedCommand = DataSourceHelper.replaceValuesInString(sqlDataSource.sqlCommand,inputDetails);
+          let replacedCommand = DataSourceHelper.replaceValuesInString(sqlDataSource.sqlCommand, inputDetails);
 
           // Replace @@value@@ from currentRow
-          replacedCommand = DataSourceHelper.replaceValuesInString(replacedCommand,currentRow);
+          replacedCommand = DataSourceHelper.replaceValuesInString(replacedCommand, currentRow);
 
           // TODO: Support for SQL Parameters
           // TODO: Support for Paging
 
           obsCollection.push(
             new Promise<any>((colResolve, colReject) => {
-
-                new sql.ConnectionPool(connString).connect().then(pool => {
-                    return pool.query(replacedCommand);
-                }).then(result => {
+              new sql.ConnectionPool(connString)
+                .connect()
+                .then(pool => {
+                  return pool.query(replacedCommand);
+                })
+                .then(result => {
+                  if (result.recordset) {
                     dataResults.rowCount = result.recordset.length;
                     dataResults.jsonData = result.recordset;
+                  } else {
+                    dataResults.jsonData = '';
+                  }
 
-                    colResolve(dataResults);
-                }).catch(err => {
-                  colReject(
-                        `SqlCommand Failed: Message ${err.message}`
-                      );
+                  colResolve(dataResults);
                 })
-              }));
+                .catch(err => {
+                  colReject(`SqlCommand Failed: Message ${err.message}`);
+                });
+            })
+          );
         });
 
         Promise.all(obsCollection).then(
