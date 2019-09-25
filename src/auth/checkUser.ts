@@ -6,7 +6,13 @@ export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
     if(!menu.roles) return true;
 
     var checkUserRoles = [...user.roles];
-    var checkAllowedRoles = [...menu.roles];
+    var checkAllowedRoles = [];
+
+    if(Array.isArray(menu.roles)) {
+      checkAllowedRoles = [...menu.roles];
+    } else {
+      checkAllowedRoles = [menu.roles];
+    }
 
     var isUserCool = false;
     checkUserRoles.forEach(checkUserRole => {
