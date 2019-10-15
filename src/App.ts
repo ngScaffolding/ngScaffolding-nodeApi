@@ -43,10 +43,10 @@ class App {
     this.express.set('views', path.join(__dirname, 'views'));
     this.express.set('view engine', 'pug');
     this.express.use(morgan('combined', { stream: winston.stream }));
-    this.express.use(bodyParser.json());
+    this.express.use(bodyParser.json({limit: '10mb'}));
     this.express.use(cors())
     this.express.use(authoriseRequest);
-    this.express.use(bodyParser.urlencoded({ extended: false }));
+    this.express.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
     this.express.use(function(err,req,res,next){
       if(err) {
         winston.error(err);
