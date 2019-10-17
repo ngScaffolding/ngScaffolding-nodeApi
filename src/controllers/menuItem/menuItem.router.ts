@@ -22,12 +22,13 @@ export class MenuItemRouter {
     try {
       var userDetails = req['userDetails'] as BasicUser;
       var dataAccess = DataSourceSwitch.default.dataSource;
+      let isMobileCalled = req.query.mobile;
 
       Promise.all([dataAccess.getMenuItems(), dataAccess.getAllWidgets()]).then(
         resultsCol => {
           let allMenuItems = resultsCol[0];
 
-          var userMenuItems = allMenuItems.filter(menu => menu!== null ? checkUser(userDetails, menu): false);
+          var userMenuItems = allMenuItems.filter(menu => (menu !== null ? checkUser(userDetails, menu) : false));
 
           userMenuItems
             .filter(menu => menu.type && menu.type === 'dashboard')
@@ -45,7 +46,13 @@ export class MenuItemRouter {
           userMenuItems
             .filter(menu => !menu.parent)
             .forEach(menu => {
-              treeMenuItems.push(menu);
+              if (isMobileCalled && menu.isMobile) {
+                treeMenuItems.push(menu);
+              } else {
+                if (!menu.isMobile) {
+                  treeMenuItems.push(menu);
+                }
+              }
             });
 
           // Now non-root
