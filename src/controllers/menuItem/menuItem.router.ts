@@ -22,7 +22,7 @@ export class MenuItemRouter {
     try {
       var userDetails = req['userDetails'] as BasicUser;
       var dataAccess = DataSourceSwitch.default.dataSource;
-      let isMobileCalled = req.query.mobile;
+      let isMobileCalled = JSON.parse(req.query.mobile);
 
       Promise.all([dataAccess.getMenuItems(), dataAccess.getAllWidgets()]).then(
         resultsCol => {
