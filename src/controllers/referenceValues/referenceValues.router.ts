@@ -84,6 +84,8 @@ export class ReferenceValuesRouter {
                     });
                     resolve(refValue);
                   }
+                },error=>{
+                  reject(error);
                 });
                 break;
               }
@@ -105,6 +107,8 @@ export class ReferenceValuesRouter {
                     });
                     resolve(refValue);
                   }
+                },error=>{
+                  reject(error);
                 });
                 break;
               }

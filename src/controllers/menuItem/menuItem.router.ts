@@ -46,8 +46,10 @@ export class MenuItemRouter {
           userMenuItems
             .filter(menu => !menu.parent)
             .forEach(menu => {
-              if (isMobileCalled && menu.isMobile) {
-                treeMenuItems.push(menu);
+              if (isMobileCalled) {
+                if (menu.isMobile) {
+                  treeMenuItems.push(menu);
+                }
               } else {
                 if (!menu.isMobile) {
                   treeMenuItems.push(menu);

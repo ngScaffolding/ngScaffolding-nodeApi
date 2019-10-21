@@ -69,7 +69,7 @@ export class SQLCommandHandler {
                   colResolve(dataResults);
                 })
                 .catch(err => {
-                  colReject(`SqlCommand Failed: Message ${err.message}`);
+                  colReject(`SqlCommand Failed: Message ${err.message} -- ${replacedCommand}`);
                 });
             })
           );
