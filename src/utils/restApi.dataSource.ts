@@ -42,11 +42,14 @@ export class RESTApiHandler {
 
           // Call API For each Row in rows
           rows.forEach(currentRow => {
-            // Replace @@value@@ from inputDetails
+            // Replace @@value## from inputDetails
             let replacedUrl = DataSourceHelper.replaceValuesInString(apiDataSource.url, inputDetails);
 
-            // Replace @@value@@ from currentRow
+            // Replace @@value## from currentRow
             replacedUrl = DataSourceHelper.replaceValuesInString(replacedUrl, currentRow);
+
+            // Clear down remaining parameter values
+            replacedUrl = DataSourceHelper.clearRemainingPlaceholders(replacedUrl);
 
             // If we have a serverName, go and get the http prefix from the env
             if (apiDataSource.serverName) {
@@ -84,7 +87,6 @@ export class RESTApiHandler {
 
             if (apiDataSource.verb === 'put' || apiDataSource.verb === 'post' || apiDataSource.verb === 'patch') {
               if (apiDataSource.bodyValues && apiDataSource.bodyValues.length > 0) {
-
                 // Only copy values that are defined to body
                 apiDataSource.bodyValues.forEach(bodyValue => {
                   // Value coded into bodyValue
@@ -137,12 +139,15 @@ export class RESTApiHandler {
               })
             );
 
-            Promise.all(obsCollection).then(results => {
-              resolve(results[0]);
-            }, error => {
+            Promise.all(obsCollection).then(
+              results => {
+                resolve(results[0]);
+              },
+              error => {
                 winston.error(error);
-              resolve(null);
-            });
+                resolve(null);
+              }
+            );
           });
         },
         error => {

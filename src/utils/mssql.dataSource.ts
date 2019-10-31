@@ -42,11 +42,14 @@ export class SQLCommandHandler {
 
         // Call API For each Row in rows
         rows.forEach(currentRow => {
-          // Replace @@value@@ from inputDetails
+          // Replace @@value## from inputDetails
           let replacedCommand = DataSourceHelper.replaceValuesInString(sqlDataSource.sqlCommand, inputDetails);
 
-          // Replace @@value@@ from currentRow
+          // Replace @@value## from currentRow
           replacedCommand = DataSourceHelper.replaceValuesInString(replacedCommand, currentRow);
+
+          // Clear down remaining parameter values
+          replacedCommand = DataSourceHelper.clearRemainingPlaceholders(replacedCommand);
 
           // TODO: Support for SQL Parameters
           // TODO: Support for Paging

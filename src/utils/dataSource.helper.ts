@@ -30,11 +30,15 @@ export class DataSourceHelper {
 
     if (inputObject) {
       Object.keys(inputObject).forEach(key => {
-        retString = this.replaceAll(retString, `@@${key}@@`, inputObject[key]);
+        retString = this.replaceAll(retString, `@@${key}##`, inputObject[key]);
       });
     }
 
     return retString;
+  }
+
+  public static clearRemainingPlaceholders(inputstring: string): string {
+    return inputstring.replace(/\@@(.+?)\##/g, '');
   }
 
   // Add case insensitive replace
