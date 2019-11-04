@@ -23,6 +23,16 @@ export class dataSourceResolver {
           dataRequest.inputData = { seed: dataRequest.seed };
         }
       }
+
+      // If we have filterValues addem in
+      if (dataRequest.filterValues) {
+        if (dataRequest.inputData) {
+          dataRequest.inputData = dataRequest.filterValues;
+        } else {
+          dataRequest.inputData = { ...dataRequest.filterValues, ...dataRequest.inputData };
+        }
+      }
+
       ds.dataSource
         .getDataSource(dataRequest.name)
         .then(dataSouorce => {
