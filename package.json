@@ -30,7 +30,8 @@
     "chai-http": "^4.0.0",
     "gulp": "^4.0.0",
     "mocha": "^5.1.1",
-    "nodemon": "^1.18.11"
+    "nodemon": "^1.18.11",
+    "prettier": "^1.19.1"
   },
   "dependencies": {
     "@types/express-serve-static-core": "^4.16.4",
