@@ -5,6 +5,7 @@ import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 import isUserInRole from '../../auth/authoriseRoles';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
+const winston = require('../../config/winston');
 
 export class UserPreferenceValueRouter {
   router: Router;
@@ -26,6 +27,7 @@ export class UserPreferenceValueRouter {
         capRes.json(defValues);
       })
       .catch(err => {
+        winston.error(err);
         capRes.sendStatus(500);
       });
   }
@@ -45,6 +47,7 @@ export class UserPreferenceValueRouter {
         capRes.json(prefValues);
       })
       .catch(err => {
+        winston.error(err);
         capRes.sendStatus(500);
       });
   }
@@ -63,6 +66,7 @@ export class UserPreferenceValueRouter {
         capRes.json(prefValues);
       })
       .catch(err => {
+        winston.error(err);
         capRes.sendStatus(500);
       });
   }
@@ -82,6 +86,7 @@ export class UserPreferenceValueRouter {
         capRes.json(prefValues);
       })
       .catch(err => {
+        winston.error(err);
         capRes.sendStatus(500);
       });
   }
