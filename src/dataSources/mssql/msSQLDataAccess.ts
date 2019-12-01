@@ -14,7 +14,6 @@ import {
 import { MSSQLHelpers } from './msSQLHelpers';
 
 const sql = require('mssql');
-const escapeString = require('sql-string-escape')
 
 export class MsSQLDataAccess implements IDataAccessLayer {
     private tablePrefix = '';
@@ -23,7 +22,7 @@ export class MsSQLDataAccess implements IDataAccessLayer {
         let connString = process.env['DB_HOST'];
         let pool = await new sql.ConnectionPool(connString).connect();
 
-        return pool.query(escapeString(sqlCommand));
+        return pool.query(sqlCommand);
     }
     private getUserPrefKey(userId: string, name: string): string {
         return `${userId}::${name}`;
@@ -121,6 +120,8 @@ export class MsSQLDataAccess implements IDataAccessLayer {
                     }
                 }
                 resolve(retVal);
+            }, err=>{
+                let x =0;
             });
         });
     }

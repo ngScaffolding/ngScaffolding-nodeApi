@@ -1,3 +1,5 @@
+var SqlString = require('sqlstring');
+
 export interface InputAndRows {
   inputDetails: any;
   rows: any[];
@@ -30,7 +32,7 @@ export class DataSourceHelper {
 
     if (inputObject) {
       Object.keys(inputObject).forEach(key => {
-        retString = this.replaceAll(retString, `@@${key}##`, inputObject[key]);
+        retString = this.replaceAll(retString, `@@${key}##`, SqlString.escape(inputObject[key]));
       });
     }
 

@@ -1,12 +1,12 @@
-import { WidgetDetails } from "./widgetDetails.model";
-import { InputBuilderDefinition } from "../inputBuilderModels";
+import { WidgetDetails } from './widgetDetails.model';
+import { InputBuilderDefinition } from '../inputBuilderModels';
 
-export interface DashboardModel{
+export interface DashboardModel {
     title: string;
 
     // Readonly means that the dash cannot change, includes order, size, inputdata
     readOnly?: boolean;
-    
+
     // Denotes the gallery of optional widgets to create
     galleryName: string;
 
@@ -20,4 +20,5 @@ export interface DashboardModel{
     configuredValues?: any;
 
     widgets: WidgetDetails[];
+    component?: any;
 }
