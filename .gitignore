@@ -37,6 +37,7 @@ jspm_packages/
 
 # compiled output
 /dist
+/build
 
 # Typescript v1 declaration files
 typings/
