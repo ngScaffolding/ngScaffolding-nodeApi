@@ -9,6 +9,8 @@
     "dev": "npm-run-all copy-assets debug",
     "debug": "tsc-watch --onSuccess \"node dist/index.js\"",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
+    "build:debug": "npm-run-all tscbuild copy-assets",
+    "tscbuild": "tsc -p .",
     "build": "npm-run-all webpack copy-assets",
     "webpack": "webpack"
   },
