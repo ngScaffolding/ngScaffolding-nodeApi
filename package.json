@@ -4,14 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node build/index.js",
     "copy-assets": "node_modules\\.bin\\ts-node tools/copyAssets",
     "dev": "npm-run-all copy-assets debug",
     "debug": "tsc-watch --onSuccess \"node dist/index.js\"",
     "test": "mocha --reporter spec --compilers ts:ts-node/register",
-    "compile": "tsc -p .",
-    "postinstall": "npm-run-all copy-assets build",
-    "build": "npm-run-all compile copy-assets"
+    "build:debug": "npm-run-all tscbuild copy-assets",
+    "tscbuild": "tsc -p .",
+    "build": "npm-run-all webpack copy-assets",
+    "webpack": "webpack"
   },
   "devDependencies": {
     "@angular/core": "^6.0.0",
@@ -31,7 +32,12 @@
     "gulp": "^4.0.0",
     "mocha": "^5.1.1",
     "nodemon": "^1.18.11",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.3",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "@types/express-serve-static-core": "^4.16.4",
@@ -70,7 +76,6 @@
     "tedious": "^6.2.0",
     "ts-node": "^6.2.0",
     "tsc-watch": "^1.0.21",
-    "typescript": "^3.5.1",
     "uuid": "^3.3.2",
     "winston": "^2.4.4"
   }

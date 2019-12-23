@@ -67,7 +67,7 @@ export class ReferenceValuesRouter {
     private static valueOrNull(item: object, refValue: ReferenceValue, property: string) {
         let lookIn = property;
         if (refValue[lookIn + 'Property']) {
-            lookIn = refValue[refValue[lookIn + 'Property']];
+            lookIn = refValue[lookIn + 'Property'];
         }
         return item[lookIn];
     }

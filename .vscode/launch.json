@@ -10,7 +10,7 @@
 			"request": "launch",
 			"name": "Launch Program",
 			"program": "${workspaceRoot}/dist/index.js",
-            "preLaunchTask": "npm: build",
+            "preLaunchTask": "npm: build:debug",
             "args": [""],
 			"outFiles": [
 				"${workspaceRoot}/dist/**/*.js"
