@@ -66,9 +66,9 @@ export class SQLCommandHandler {
                         obsCollection.push(
                             new Promise<any>((colResolve, colReject) => {
                                 if (sqlDataSource.isStoredProcedure) {
-                                    const request = new sql.Request();
-                                    if (dataSource.parameters) {
-                                        dataSource.parameters.forEach(param => {
+                                    const request = new sql.Request(pool);
+                                    if (sqlDataSource.parameters) {
+                                        sqlDataSource.parameters.forEach(param => {
                                             let foundValue: any = null;
                                             // Default to sourceProperty
                                             let paramName = param.sourceProperty || param.name;
@@ -79,7 +79,7 @@ export class SQLCommandHandler {
                                             if(currentRow.hasOwnProperty(paramName)) {
                                                 foundValue = currentRow[paramName];
                                             }
-                                            request.input(param.name, this.getParameterType(param), foundValue);
+                                            request.input(param.name, this.getParameterType(param), this.getParameterValue(param,foundValue));
                                         });
                                     }
                                     return request
@@ -133,6 +133,21 @@ export class SQLCommandHandler {
                 }); // get datasource
             }); // return promise
         });
+    }
+    private static getParameterValue(parameter: ParameterDetail, value: any) {
+        if(!value) {
+            return null;
+        }
+        switch (parameter.type) {
+            case ParameterTypes.Number: {
+                return Number(value);
+            }
+            case ParameterTypes.Date: {
+                return new Date(value);
+            }
+            default:
+                return value;
+        }
     }
     private static getParameterType(parameter: ParameterDetail) {
         switch (parameter.type) {
