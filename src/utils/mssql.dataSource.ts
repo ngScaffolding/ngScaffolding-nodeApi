@@ -44,6 +44,10 @@ export class SQLCommandHandler {
                     results: [{ success: true, message: '' }]
                 };
 
+                if (!inputDetails) {
+                    inputDetails = {};
+                }
+
                 // Connect to SQL
                 // Use pool for each command
                 new sql.ConnectionPool(connString).connect().then(pool => {
@@ -72,14 +76,18 @@ export class SQLCommandHandler {
                                             let foundValue: any = null;
                                             // Default to sourceProperty
                                             let paramName = param.sourceProperty || param.name;
-                                            
-                                            if(inputDetails.hasOwnProperty(paramName)) {
+
+                                            if (inputDetails.hasOwnProperty(paramName)) {
                                                 foundValue = inputDetails[paramName];
                                             }
-                                            if(currentRow.hasOwnProperty(paramName)) {
+                                            if (currentRow.hasOwnProperty(paramName)) {
                                                 foundValue = currentRow[paramName];
                                             }
-                                            request.input(param.name, this.getParameterType(param), this.getParameterValue(param,foundValue));
+                                            request.input(
+                                                param.name,
+                                                this.getParameterType(param),
+                                                this.getParameterValue(param, foundValue)
+                                            );
                                         });
                                     }
                                     return request
@@ -135,7 +143,7 @@ export class SQLCommandHandler {
         });
     }
     private static getParameterValue(parameter: ParameterDetail, value: any) {
-        if(!value) {
+        if (!value) {
             return null;
         }
         switch (parameter.type) {
