@@ -1,5 +1,15 @@
-export interface ParameterDetailModel {
+export enum ParameterTypes{
+    String = 'string',
+    Number = 'number',
+    Boolean = 'boolean',
+    Date = 'date',
+    Binary = 'binary'
+  }
+  
+  export interface ParameterDetail {
     name: string;
-    sqltype: string;
+    type: ParameterTypes;
     value: any;
-}
+    sourceProperty: string;
+  }
+  
