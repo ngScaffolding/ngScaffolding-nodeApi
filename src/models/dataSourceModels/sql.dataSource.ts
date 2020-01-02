@@ -8,6 +8,8 @@ export class SqlDataSource {
 
     testCommand?: string;
     isStoredProcedure?: boolean;
+
+    parameters?: ParameterDetail[];
 }
 
 export function getParameterType(parameter: ParameterDetail) {
