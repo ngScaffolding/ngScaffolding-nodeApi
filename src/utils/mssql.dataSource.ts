@@ -1,5 +1,5 @@
 import { IDataSourceSwitch } from '../dataSourceSwitch';
-import { SqlDataSource, DataResults, getParameterType } from '../models/index';
+import { SqlDataSource, DataResults, ParameterDetail, ParameterTypes } from '../models/index';
 import { DataSourceHelper } from './dataSource.helper';
 
 require('dotenv').config();
@@ -79,7 +79,7 @@ export class SQLCommandHandler {
                                             if(currentRow.hasOwnProperty(paramName)) {
                                                 foundValue = currentRow[paramName];
                                             }
-                                            request.input(param.name, getParameterType(param), foundValue);
+                                            request.input(param.name, this.getParameterType(param), foundValue);
                                         });
                                     }
                                     return request
@@ -133,5 +133,26 @@ export class SQLCommandHandler {
                 }); // get datasource
             }); // return promise
         });
+    }
+    private static getParameterType(parameter: ParameterDetail) {
+        switch (parameter.type) {
+            case ParameterTypes.String: {
+                return sql.NVarChar;
+            }
+            case ParameterTypes.Number: {
+                return sql.Int;
+            }
+            case ParameterTypes.Boolean: {
+                return sql.Bit;
+            }
+            case ParameterTypes.Date: {
+                return sql.DateTime;
+            }
+            case ParameterTypes.Binary: {
+                return sql.VarBinary;
+            }
+            default:
+                return sql.NVarChar;
+        }
     }
 }
