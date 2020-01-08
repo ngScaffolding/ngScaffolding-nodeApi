@@ -7,6 +7,7 @@ import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
 const request = require('request');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
+const winston = require('../../config/winston');
 
 export class RolesRouter {
   router: Router;
@@ -35,6 +36,7 @@ export class RolesRouter {
 
       res.json(userRoles);
     }).catch(err=>{
+      winston.error(err);
       res.sendStatus(500);
     });
   }

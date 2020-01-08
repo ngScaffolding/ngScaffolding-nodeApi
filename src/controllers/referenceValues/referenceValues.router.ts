@@ -8,6 +8,7 @@ import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
 import { MongoDBCommandHandler } from '../../utils/mongoDB.dataSource';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
+const winston = require('../../config/winston');
 
 export class ReferenceValuesRouter {
     router: Router;
@@ -32,11 +33,13 @@ export class ReferenceValuesRouter {
                         res.json(refValue);
                     },
                     error => {
+                        winston.error(error);
                         res.sendStatus(500);
                     }
                 );
             },
             error => {
+                winston.error(error);
                 res.sendStatus(500);
             }
         );
