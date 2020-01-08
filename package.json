@@ -71,7 +71,6 @@
     "rimraf": "^2.6.3",
     "rxjs": "^6.5.2",
     "shelljs": "^0.8.3",
-    "sqlstring": "^2.3.1",
     "swagger-ui-express": "^3.0.10",
     "tedious": "^6.2.0",
     "ts-node": "^6.2.0",
