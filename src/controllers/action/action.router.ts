@@ -18,7 +18,7 @@ export class ActionRouter {
 
   public postAction(req: Request, res: Response, next: NextFunction) {
     var actionRequest = req.body as ActionRequestModel;
-    let dataSourceResolver = new DataSourceResolver();
+    //let dataSourceResolver = new DataSourceResolver();
 
     let dataRequest: DataSourceRequest = {
       name: actionRequest.action.dataSourceName,
@@ -28,7 +28,7 @@ export class ActionRouter {
 
     let capRes = res;
 
-    dataSourceResolver
+    DataSourceResolver
       .resolve(dataRequest, req)
       .then(dataResults => {
         capRes.json(dataResults);

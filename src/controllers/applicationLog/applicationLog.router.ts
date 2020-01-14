@@ -15,11 +15,7 @@ export class ApplicationLogRouter {
 
     let ds = DataSourceSwitch.default.dataSource as IDataAccessLayer;
 
-    ds.saveApplicationLog(req.body)
-      .then(res => {
-
-      });
-    
+    ds.saveApplicationLog(req.body);
   }
 
   public postNew(req: Request, res: Response, next: NextFunction) {
@@ -28,12 +24,9 @@ export class ApplicationLogRouter {
   }
 
   init() {
-    // this.router.get("/", this.getAll);
     this.router.post("/", this.saveApplicationLog);
   }
 }
 
-// Create the HeroRouter, and export its configured Express.Router
 const applicationLogRouter = new ApplicationLogRouter().router
-
 export default applicationLogRouter;

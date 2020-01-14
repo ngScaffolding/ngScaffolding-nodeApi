@@ -1,9 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
-
 import { IDataAccessLayer } from '../../dataSources/dataAccessLayer';
-
-const request = require('request');
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 

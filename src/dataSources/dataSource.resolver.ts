@@ -12,12 +12,11 @@ var DataSourceSwitch = require('../dataSourceSwitch');
 const winston = require('../config/winston');
 
 export class DataSourceResolver {
-    private readonly dataSourceCachePrefix = 'DataSource_';
-    private ttl = 10 * 60 * 1; // cache for 10 Mins
-    private cacheService = new CacheService(this.ttl); // Create a new cache service instance
+    private static readonly dataSourceCachePrefix = 'DataSource_';
+    private static ttl = 10 * 60 * 1; // cache for 10 Mins
+    private static cacheService = new CacheService(DataSourceResolver.ttl); // Create a new cache service instance
 
-    public async resolve(dataRequest: DataSourceRequest, request: Request): Promise<any> {
-        return new Promise((resolve, reject) => {
+    public static async resolve(dataRequest: DataSourceRequest, request: Request): Promise<any> {
             const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
             // If we have a seed value add it into the inputData
@@ -38,11 +37,11 @@ export class DataSourceResolver {
                 }
             }
 
-            let dataSource = this.cacheService.get(`${this.dataSourceCachePrefix}${dataRequest.name}`, () => {
-                ds.dataSource.getDataSource(dataRequest.name).then(dataSource => {
-                    return dataSource;
-                });
+            let dataSource = await this.cacheService.get(`${this.dataSourceCachePrefix}${dataRequest.name}`, () => {
+                 return ds.dataSource.getDataSource(dataRequest.name);
             });
+
+            // let dataSource = await ds.dataSource.getDataSource(dataRequest.name);
 
             switch (dataSource.type) {
                 case DataSourceTypes.RestApi: {
@@ -59,15 +58,8 @@ export class DataSourceResolver {
                             dataResults => {
                                 dataResults.expiresSeconds = dataSource.expires;
                                 dataResults.success = true;
-                                resolve(dataResults);
-                            },
-                            err => {
-                                reject(err);
-                            }
-                        )
-                        .catch(err => {
-                            reject(err);
-                        });
+                                return dataResults;
+                            });
                     break;
                 }
 
@@ -83,15 +75,8 @@ export class DataSourceResolver {
                             dataResults => {
                                 dataResults.expiresSeconds = dataSource.expires;
                                 dataResults.success = true;
-                                resolve(dataResults);
-                            },
-                            err => {
-                                reject(err);
-                            }
-                        )
-                        .catch(err => {
-                            reject(err);
-                        });
+                                return dataResults;
+                            });
                     break;
                 }
 
@@ -103,15 +88,8 @@ export class DataSourceResolver {
                             dataResults => {
                                 dataResults.expiresSeconds = dataSource.expires;
                                 dataResults.success = true;
-                                resolve(dataResults);
-                            },
-                            err => {
-                                reject(err);
-                            }
-                        )
-                        .catch(err => {
-                            reject(err);
-                        });
+                                return dataResults;
+                            });
                     break;
                 }
 
@@ -123,19 +101,11 @@ export class DataSourceResolver {
                             dataResults => {
                                 dataResults.expiresSeconds = dataSource.expires;
                                 dataResults.success = true;
-                                resolve(dataResults);
-                            },
-                            err => {
-                                reject(err);
-                            }
-                        )
-                        .catch(err => {
-                            reject(err);
-                        });
+                                return dataResults;
+                            });
 
                     break;
                 }
             }
-        });
     }
 }

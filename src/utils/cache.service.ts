@@ -7,7 +7,7 @@ export class CacheService {
         this.cache = new NodeCache({ stdTTL: ttlSeconds, checkperiod: ttlSeconds * 0.2, useClones: false });
     }
 
-    get(key, storeFunction) {
+    public async get(key, storeFunction) {
         const value = this.cache.get(key);
         if (value) {
             return Promise.resolve(value);
