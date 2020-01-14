@@ -86,10 +86,10 @@ export class ReferenceValuesRouter {
             if (refValue.dataSourceName) {
                 // Go Fetch
                 ds.dataSource.getDataSource(refValue.dataSourceName).then(
-                    dataSouorce => {
-                        switch (dataSouorce.type) {
+                    dataSource => {
+                        switch (dataSource.type) {
                             case DataSourceTypes.SQL: {
-                                SQLCommandHandler.runCommand(refValue.dataSourceName, { seed: seed }).then(
+                                SQLCommandHandler.runCommand(dataSource, { seed: seed }).then(
                                     dataResults => {
                                         if (!dataResults) {
                                             reject();
@@ -119,7 +119,7 @@ export class ReferenceValuesRouter {
                             }
                             case DataSourceTypes.RestApi: {
                                 RESTApiHandler.runCommand(
-                                    refValue.dataSourceName,
+                                    dataSource,
                                     { seed: seed },
                                     null,
                                     authHeader

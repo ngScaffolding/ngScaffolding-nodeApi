@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { DataSourceRequest, ActionRequestModel } from '../../models/index';
-import { dataSourceResolver } from '../../dataSources/dataSource.resolver';
+import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
 import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 
@@ -18,6 +18,7 @@ export class ActionRouter {
 
   public postAction(req: Request, res: Response, next: NextFunction) {
     var actionRequest = req.body as ActionRequestModel;
+    let dataSourceResolver = new DataSourceResolver();
 
     let dataRequest: DataSourceRequest = {
       name: actionRequest.action.dataSourceName,

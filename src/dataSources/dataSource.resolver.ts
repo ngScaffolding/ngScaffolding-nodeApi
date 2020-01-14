@@ -7,125 +7,135 @@ import { SQLCommandHandler } from '../utils/mssql.dataSource';
 import { DocumentDBCommandHandler } from '../utils/documentDB.dataSource';
 import { MongoDBCommandHandler } from '../utils/mongoDB.dataSource';
 
+import { CacheService } from '../utils/cache.service';
 var DataSourceSwitch = require('../dataSourceSwitch');
 const winston = require('../config/winston');
 
-export class dataSourceResolver {
-  public static resolve(dataRequest: DataSourceRequest, request: Request): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const ds: IDataSourceSwitch = DataSourceSwitch.default;
+export class DataSourceResolver {
+    private readonly dataSourceCachePrefix = 'DataSource_';
+    private ttl = 10 * 60 * 1; // cache for 10 Mins
+    private cacheService = new CacheService(this.ttl); // Create a new cache service instance
 
-      // If we have a seed value add it into the inputData
-      if (dataRequest.seed) {
-        if (dataRequest.inputData) {
-          dataRequest.inputData['seed'] = dataRequest.seed;
-        } else {
-          dataRequest.inputData = { seed: dataRequest.seed };
-        }
-      }
+    public async resolve(dataRequest: DataSourceRequest, request: Request): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const ds: IDataSourceSwitch = DataSourceSwitch.default;
 
-      // If we have filterValues addem in
-      if (dataRequest.filterValues) {
-        if (dataRequest.inputData) {
-          dataRequest.inputData = dataRequest.filterValues;
-        } else {
-          dataRequest.inputData = { ...dataRequest.filterValues, ...dataRequest.inputData };
-        }
-      }
+            // If we have a seed value add it into the inputData
+            if (dataRequest.seed) {
+                if (dataRequest.inputData) {
+                    dataRequest.inputData['seed'] = dataRequest.seed;
+                } else {
+                    dataRequest.inputData = { seed: dataRequest.seed };
+                }
+            }
 
-      ds.dataSource
-        .getDataSource(dataRequest.name)
-        .then(dataSouorce => {
-          switch (dataSouorce.type) {
-            case DataSourceTypes.RestApi: {
-              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+            // If we have filterValues addem in
+            if (dataRequest.filterValues) {
+                if (dataRequest.inputData) {
+                    dataRequest.inputData = dataRequest.filterValues;
+                } else {
+                    dataRequest.inputData = { ...dataRequest.filterValues, ...dataRequest.inputData };
+                }
+            }
 
-              RESTApiHandler.runCommand(dataRequest.name, details.inputDetails, details.rows, request.headers.authorization, dataRequest.body)
-                .then(
-                  dataResults => {
-                    dataResults.expiresSeconds = dataSouorce.expires;
-                    dataResults.success = true;
-                    resolve(dataResults);
-                  },
-                  err => {
-                    reject(err);
-                  }
-                )
-                .catch(err => {
-                  reject(err);
+            let dataSource = this.cacheService.get(`${this.dataSourceCachePrefix}${dataRequest.name}`, () => {
+                ds.dataSource.getDataSource(dataRequest.name).then(dataSource => {
+                    return dataSource;
                 });
-              break;
+            });
+
+            switch (dataSource.type) {
+                case DataSourceTypes.RestApi: {
+                    let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+                    RESTApiHandler.runCommand(
+                        dataSource,
+                        details.inputDetails,
+                        details.rows,
+                        request.headers.authorization,
+                        dataRequest.body
+                    )
+                        .then(
+                            dataResults => {
+                                dataResults.expiresSeconds = dataSource.expires;
+                                dataResults.success = true;
+                                resolve(dataResults);
+                            },
+                            err => {
+                                reject(err);
+                            }
+                        )
+                        .catch(err => {
+                            reject(err);
+                        });
+                    break;
+                }
+
+                case DataSourceTypes.MySQL: {
+                    break;
+                }
+
+                case DataSourceTypes.MongoDB: {
+                    let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+                    MongoDBCommandHandler.runCommand(dataSource, details.inputDetails, details.rows)
+                        .then(
+                            dataResults => {
+                                dataResults.expiresSeconds = dataSource.expires;
+                                dataResults.success = true;
+                                resolve(dataResults);
+                            },
+                            err => {
+                                reject(err);
+                            }
+                        )
+                        .catch(err => {
+                            reject(err);
+                        });
+                    break;
+                }
+
+                case DataSourceTypes.SQL: {
+                    let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+                    SQLCommandHandler.runCommand(dataSource, details.inputDetails, details.rows)
+                        .then(
+                            dataResults => {
+                                dataResults.expiresSeconds = dataSource.expires;
+                                dataResults.success = true;
+                                resolve(dataResults);
+                            },
+                            err => {
+                                reject(err);
+                            }
+                        )
+                        .catch(err => {
+                            reject(err);
+                        });
+                    break;
+                }
+
+                case DataSourceTypes.DocumentDB: {
+                    let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
+
+                    DocumentDBCommandHandler.runCommand(dataSource, details.inputDetails, details.rows)
+                        .then(
+                            dataResults => {
+                                dataResults.expiresSeconds = dataSource.expires;
+                                dataResults.success = true;
+                                resolve(dataResults);
+                            },
+                            err => {
+                                reject(err);
+                            }
+                        )
+                        .catch(err => {
+                            reject(err);
+                        });
+
+                    break;
+                }
             }
-
-            case DataSourceTypes.MySQL: {
-              break;
-            }
-
-            case DataSourceTypes.MongoDB: {
-              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
-
-              MongoDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
-                .then(
-                  dataResults => {
-                    dataResults.expiresSeconds = dataSouorce.expires;
-                    dataResults.success = true;
-                    resolve(dataResults);
-                  },
-                  err => {
-                    reject(err);
-                  }
-                )
-                .catch(err => {
-                  reject(err);
-                });
-              break;
-            }
-
-            case DataSourceTypes.SQL: {
-              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
-
-              SQLCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
-                .then(
-                  dataResults => {
-                    dataResults.expiresSeconds = dataSouorce.expires;
-                    dataResults.success = true;
-                    resolve(dataResults);
-                  },
-                  err => {
-                    reject(err);
-                  }
-                )
-                .catch(err => {
-                  reject(err);
-                });
-              break;
-            }
-
-            case DataSourceTypes.DocumentDB: {
-              let details = DataSourceHelper.prepareInputAndRows(dataRequest.inputData, dataRequest.rowData);
-
-              DocumentDBCommandHandler.runCommand(dataRequest.name, details.inputDetails, details.rows)
-                .then(
-                  dataResults => {
-                    dataResults.expiresSeconds = dataSouorce.expires;
-                    dataResults.success = true;
-                    resolve(dataResults);
-                  },
-                  err => {
-                    reject(err);
-                  }
-                )
-                .catch(err => {
-                  reject(err);
-                });
-
-              break;
-            }
-          }
-        })
-        .catch(err => {
-          reject(err);
         });
-    });
-  }
+    }
 }

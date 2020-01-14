@@ -6,7 +6,7 @@ import { DataSourceHelper } from '../../utils/dataSource.helper';
 import { SQLCommandHandler } from '../../utils/mssql.dataSource';
 import { DocumentDBCommandHandler } from '../../utils/documentDB.dataSource';
 import { MongoDBCommandHandler } from '../../utils/mongoDB.dataSource';
-import { dataSourceResolver } from '../../dataSources/dataSource.resolver';
+import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
 
 var DataSourceSwitch = require('../../dataSourceSwitch');
 const winston = require('../../config/winston');
@@ -20,6 +20,7 @@ export class DataSourceRouter {
 
   public postDataSource(req: Request, res: Response, next: NextFunction) {
 
+    let dataSourceResolver = new DataSourceResolver();
     let dataRequest = req.body as DataSourceRequest;
 
     let capRes = res;
