@@ -5,32 +5,28 @@ import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
 const winston = require('../../config/winston');
 
 export class DataSourceRouter {
-  router: Router;
-  constructor() {
-    this.router = Router();
-    this.init();
-  }
+    router: Router;
+    constructor() {
+        this.router = Router();
+        this.init();
+    }
 
-  public postDataSource(req: Request, res: Response) {
+    public async postDataSource(req: Request, res: Response) {
+        let dataRequest = req.body as DataSourceRequest;
 
-    let dataRequest = req.body as DataSourceRequest;
+        let capRes = res;
 
-    let capRes = res;
-
-    DataSourceResolver
-      .resolve(dataRequest, req)
-      .then(dataResults => {
+        let dataResults = await DataSourceResolver.resolve(dataRequest, req).catch(err => {
+            winston.error(err);
+            capRes.status(500).send('Call failed');
+            return;
+        });
         capRes.json(dataResults);
-      })
-      .catch(err => {
-        winston.error(err);
-        capRes.status(500).send('Call failed');
-      });
-  }
+    }
 
-  init() {
-    this.router.post('/', this.postDataSource);
-  }
+    init() {
+        this.router.post('/', this.postDataSource);
+    }
 }
 
 const dataSourceRouter = new DataSourceRouter().router;

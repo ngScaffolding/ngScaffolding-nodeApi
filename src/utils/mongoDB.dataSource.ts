@@ -95,7 +95,11 @@ export class MongoDBCommandHandler {
 
                     Promise.all(obsCollection).then(
                         results => {
-                            resolve({ jsonData: results[0] });
+                            resolve({
+                                expiresSeconds: dataSource.expires,
+                                success: true,
+                                jsonData: results[0]
+                            });
                         },
                         err => {
                             reject(err);

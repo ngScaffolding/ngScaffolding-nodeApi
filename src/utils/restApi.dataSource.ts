@@ -138,7 +138,10 @@ export class RESTApiHandler {
 
                 Promise.all(obsCollection).then(
                     results => {
-                        resolve(results[0]);
+                        let dataResults = results[0];
+                            dataResults.expiresSeconds = dataSource.expires;
+                            dataResults.success = true;
+                            resolve(dataResults);
                     },
                     error => {
                         winston.error(error);
