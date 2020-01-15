@@ -58,8 +58,9 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   // AppSettings  
   //
   // //////////////////////////////////////////////////////////////////
-  async public getAppSettingsValues(): Promise<AppSettingsValue[]>{
-    return DB.getAppSettings();
+  async getAppSettingsValues(): Promise<AppSettingsValue[]>{
+    let client = await MongoClient.connect(process.env['DB_HOST']);
+    return client.db('configration').collection('appSettings').find({});
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -90,7 +91,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   }
   async saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> { 
     let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('dataSources').findAndUpdateOne({name: name, dataSource});
+    return client.db('configration').collection('dataSources').findAndUpdateOne({name: dataSource.name, dataSource});
 
   }
 
