@@ -1,4 +1,4 @@
-
+import { MongoClient, Db } from 'mongodb';
 import { IDataAccessLayer } from '../dataAccessLayer';
 import {
   ApplicationLog,
@@ -12,21 +12,47 @@ import {
   AppSettingsValue,
   Role
 } from '../../models/index';
-let MongoClient = require('mongodb').MongoClient;
+
+var winston = require('../../config/winston');
 
 
 export class MongoDBDataAccess implements IDataAccessLayer {
+  private mongoClient: MongoClient;
+  private mongoDb: Db;
+  private dbDatabaseName: string;
+  private dbUsersTableName: string;
+  
+  constructor() {
+    this.dbDatabaseName = process.env['DB_AUTH_DATABASE_NAME'] || 'configuration';
 
+    MongoClient.connect(process.env['DB_HOST']).then(
+      mongoClient => {
+          this.mongoClient = mongoClient;
+          this.mongoDb = this.mongoClient.db(this.dbDatabaseName);
+
+          winston.info('mongoDb default connection open');
+      },
+      err => {
+          winston.error(err, `Error connecting to Mongodb`);
+      }
+  );
+
+  // If the Node process ends, close the Mongoose connection
+  process.on('SIGINT', () => {
+      this.mongoClient.close(() => {
+          winston.info('mongoDb default connection disconnected through app termination');
+          process.exit(0);
+      });
+  });
+  }
   getAllProfiles(): Promise<UserPreferenceValue[]> {
     throw new Error("Method not implemented.");
   }
   
   // Application Log
   async saveApplicationLog(applictionLog: ApplicationLog): Promise<ApplicationLog> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-
-    // TODO: Database name here
-    return client.db('configration').collection('applicationLogs').inserOne(applictionLog);
+    let result = await this.mongoDb.collection('applicationLogs').insertOne(applictionLog);
+    return applictionLog;
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -35,22 +61,22 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getRoles(): Promise<Role[]> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('roles').find({});
+    
+    return this.mongoDb.collection('roles').find({}).toArray();
   }
-  async deleteRole(name: string): Promise<null> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('roles').deleteOne({name: name});
-  }
-
-  async addRole(role: Role): Promise<null> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('roles').insertOne(role);
+  async deleteRole(name: string): Promise<any> {
+    
+    return this.mongoDb.collection('roles').deleteOne({name: name});
   }
 
-  async updateRole(role: Role): Promise<null> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('roles').findAndUpdateOne({name: role.name}, role);
+  async addRole(role: Role): Promise<any> {
+    
+    return this.mongoDb.collection('roles').insertOne(role);
+  }
+
+  async updateRole(role: Role): Promise<any> {
+    
+    return this.mongoDb.collection('roles').findOneAndUpdate({name: role.name}, role);
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -59,8 +85,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getAppSettingsValues(): Promise<AppSettingsValue[]>{
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('appSettings').find({});
+    return this.mongoDb.collection('applicationSettings').find({}).toArray();
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -69,14 +94,11 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getWidget(name: string): Promise<WidgetModelBase> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('widgets').findOne({name: name});
+    return this.mongoDb.collection('widgets').findOne({name: name});
  }
 
   async getAllWidgets(): Promise<WidgetModelBase[]> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('widgets').find({});
-
+    return this.mongoDb.collection('widgets').find({}).toArray();
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -85,14 +107,11 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getDataSource(name: string): Promise<BaseDataSource> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('dataSources').findOne({name: name});
- 
+    return this.mongoDb.collection('dataSources').findOne({name: name});
   }
-  async saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> { 
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('dataSources').findAndUpdateOne({name: dataSource.name, dataSource});
 
+  async saveDataSource(dataSource: BaseDataSource): Promise<BaseDataSource> { 
+    return (await this.mongoDb.collection('dataSources').findOneAndUpdate({name: dataSource.name}, dataSource)).value;
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -100,10 +119,8 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   // Error  
   //
   // //////////////////////////////////////////////////////////////////
-  async saveError(error: ErrorModel): Promise<ErrorModel> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('errors').insertOne(error);
-
+  async saveError(error: ErrorModel): Promise<any> {
+    return await this.mongoDb.collection('errors').insertOne(error);
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -112,23 +129,19 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getMenuItem(name: string): Promise<CoreMenuItem> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('menuItems').findOne({name: name});
+    return this.mongoDb.collection('menuItems').findOne({name: name});
  }
 
   async getMenuItems(): Promise<CoreMenuItem[]> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('menuItems').find({});
+    return this.mongoDb.collection('menuItems').find({}).toArray();
   }
+
   async saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('dataSources').findAndUpdateOne({name: menuItem.name, menuItem});
-
+    return (await this.mongoDb.collection('dataSources').findOneAndUpdate({name: menuItem.name}, menuItem)).value;
   }
-  async deleteMenuItem(name: string): Promise<any> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('dataSources').deleteOne({name: name});
 
+  async deleteMenuItem(name: string): Promise<any> {
+    return this.mongoDb.collection('dataSources').deleteOne({name: name});
   }
 
   // //////////////////////////////////////////////////////////////////
@@ -137,39 +150,34 @@ export class MongoDBDataAccess implements IDataAccessLayer {
   //
   // //////////////////////////////////////////////////////////////////
   async getReferenceValue(name: string): Promise<ReferenceValue> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('referenceValues').findOne({name: name});
+    
+    return this.mongoDb.collection('referenceValues').findOne({name: name});
   }
 
   async saveReferenceValue(referenceValue: ReferenceValue): Promise<ReferenceValue> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('referenceValues').findAndUpdateOne({name: referenceValue.name}, referenceValue);
+    
+    return (await this.mongoDb.collection('referenceValues').findOneAndUpdate({name: referenceValue.name}, referenceValue)).value;
   }
 
   // User Prefs
   async getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('userPreferenceDefinitions').find({});
-
+    return this.mongoDb.collection('userPreferenceDefinitions').find({}).toArray();
   }
-  async saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition>{
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('userPreferenceDefinitions').findAndUpdateOne({name: userPreferenceDefinition.name}, userPreferenceDefinition);
 
+  async saveUserPreferenceDefinition(userPreferenceDefinition: UserPreferenceDefinition): Promise<UserPreferenceDefinition>{
+    return (await this.mongoDb.collection('userPreferenceDefinitions').findOneAndUpdate({name: userPreferenceDefinition.name}, userPreferenceDefinition)).value;
   }
 
   async saveUserPreferenceValue(userPreference: UserPreferenceValue): Promise<UserPreferenceValue> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('userPreferenceValues').find({});
+    
+    return (await this.mongoDb.collection('userPreferenceValues').findOneAndUpdate({name: userPreference.name}, userPreference)).value;
 
   }
-  async deleteUserPreferenceValue(userId: string, name: string): Promise<UserPreferenceValue> {
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('userPreferenceValues').delete({name:name});
+  async deleteUserPreferenceValue(userId: string, name: string): Promise<any> {
+    
+    return this.mongoDb.collection('userPreferenceValues').findOneAndDelete({name:name});
   }
   async getUserPreferenceValues(userId: string): Promise<UserPreferenceValue[]> {
-    
-    let client = await MongoClient.connect(process.env['DB_HOST']);
-    return client.db('configration').collection('userPreferenceValues').find({});
+    return this.mongoDb.collection('userPreferenceValues').find({}).toArray();
   }
 }

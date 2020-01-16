@@ -57,14 +57,14 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       });
     });
   }
-  deleteRole(name: string): Promise<null> {
+  deleteRole(name: string): Promise<any> {
     var tableService = azure.createTableService();
     var entity = {
       PartitionKey: '',
       RowKey: name
     };
 
-    return new Promise<null>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       tableService.deleteEntity(`${this.tablePrefix}roles`, entity, function(error, response) {
         if (!error) {
           resolve();
@@ -75,7 +75,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
 
-  addRole(role: Role): Promise<null> {
+  addRole(role: Role): Promise<any> {
     var tableService = azure.createTableService();
 
     var entity = {
@@ -84,7 +84,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       data: JSON.stringify(role)
     };
 
-    return new Promise<null>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       tableService.insertEntity(`${this.tablePrefix}roles`, entity, function(error, result, response) {
         if (!error) {
           resolve();
@@ -95,7 +95,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
     });
   }
 
-  updateRole(role: Role): Promise<null> {
+  updateRole(role: Role): Promise<any> {
     var tableService = azure.createTableService();
 
     var entity = {
@@ -104,7 +104,7 @@ export class AzureStorageDataAccess implements IDataAccessLayer {
       data: JSON.stringify(role)
     };
 
-    return new Promise<null>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       tableService.replaceEntity(`${this.tablePrefix}roles`, entity, function(error, result, response) {
         if (!error) {
           resolve();

@@ -161,13 +161,13 @@ export class MsSQLDataAccess implements IDataAccessLayer {
     getRoles(): Promise<Role[]> {
         throw new Error('Method not implemented.');
     }
-    deleteRole(name: string): Promise<null> {
+    deleteRole(name: string): Promise<any> {
         throw new Error('Method not implemented.');
     }
-    addRole(role: Role): Promise<null> {
+    addRole(role: Role): Promise<any> {
         throw new Error('Method not implemented.');
     }
-    updateRole(role: Role): Promise<null> {
+    updateRole(role: Role): Promise<any> {
         throw new Error('Method not implemented.');
     }
     getUserPreferenceDefinitions(): Promise<UserPreferenceDefinition[]> {
