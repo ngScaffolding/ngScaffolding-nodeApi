@@ -37,7 +37,7 @@ export class MongoDBDataAccess implements IDataAccessLayer {
       }
   );
 
-  // If the Node process ends, close the Mongoose connection
+  // If the Node process ends, close the mongoDb connection
   process.on('SIGINT', () => {
       this.mongoClient.close(() => {
           winston.info('mongoDb default connection disconnected through app termination');
