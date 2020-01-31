@@ -3,6 +3,7 @@ import { MongoDBDataAccess } from './dataSources/mongodb/mongoDBDataAccess';
 import { DocumentDBDataAccess } from './dataSources/documentdb';
 import { AzureStorageDataAccess } from './dataSources/azureStorage';
 import { MsSQLDataAccess } from './dataSources/mssql/msSQLDataAccess';
+import { CosmosDBDataAccess } from './dataSources/cosmosDb/cosmosDB.dataAccess';
 
 require('dotenv').config();
 
@@ -37,6 +38,11 @@ class DataSourceSwitch {
             case 'mssql':{
                 winston.info('Running MS SQL Data Source');
                 this.dataSource = new MsSQLDataAccess();
+                break;
+            }
+            case 'cosmosdb':{
+                winston.info('Running MS SQL Data Source');
+                this.dataSource = new CosmosDBDataAccess();
                 break;
             }
         }

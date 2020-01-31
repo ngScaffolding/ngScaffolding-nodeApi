@@ -25,8 +25,7 @@ export class MenuItemRouter {
       let isMobileCalled = JSON.parse(req.query.mobile);
 
       Promise.all([dataAccess.getMenuItems(), dataAccess.getAllWidgets()]).then(
-        resultsCol => {
-          let allMenuItems = resultsCol[0];
+        allMenuItems => {
 
           var userMenuItems = allMenuItems.filter(menu => (menu !== null ? checkUser(userDetails, menu) : false));
 
@@ -35,7 +34,7 @@ export class MenuItemRouter {
             .forEach(menu => {
               let dashboard = menu.menuDetails as DashboardModel;
               dashboard.widgets.forEach(widget => {
-                widget.widget = resultsCol[1].find(searchWidget => searchWidget.name === widget.widgetName);
+                widget.widget = allMenuItems[1].find(searchWidget => searchWidget.name === widget.widgetName);
               });
             });
 

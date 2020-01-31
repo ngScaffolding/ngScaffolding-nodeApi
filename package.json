@@ -36,6 +36,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "@azure/cosmos": "^3.5.4",
     "@types/express-serve-static-core": "^4.16.4",
     "@types/fs-extra": "^5.0.5",
     "@types/mssql": "^4.0.10",
