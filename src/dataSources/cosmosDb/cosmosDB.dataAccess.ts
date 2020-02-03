@@ -11,7 +11,7 @@ import {
     AppSettingsValue,
     Role
 } from '../../models/index';
-import { CosmosDBHelper } from './cosmosDb.helper';
+import { CosmosDBHelper } from './cosmosDB.helper';
 
 export class CosmosDBDataAccess implements IDataAccessLayer {
     private tablePrefix = '';
