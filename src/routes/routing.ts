@@ -4,7 +4,6 @@ import AppSettingsRouter from '../controllers/appSettings/appSettings.router';
 import ReferenceValuesRouter from '../controllers/referenceValues/referenceValues.router';
 import MenuItemRouter from '../controllers/menuItem/menuItem.router';
 import DataSourceRouter from '../controllers/dataSource/dataSource.router';
-import ActionRouter from '../controllers/action/action.router';
 import ErrorRouter from '../controllers/error/error.router';
 import UserPreferenceDefinitionRouter from '../controllers/userPreferenceDefinition/userPreferenceDefinition.router';
 import UserPreferenceValueRouter from '../controllers/userPreferenceValue/userPreferenceValue.router';
@@ -40,7 +39,6 @@ export class RouterSetup{
     this.express.use('/api/v1/referencevalues', isUserInRole('user'), ReferenceValuesRouter);
     this.express.use('/api/v1/menuitems', isUserInRole('user'), MenuItemRouter);
     this.express.use('/api/v1/datasource', isUserInRole('user'), DataSourceRouter);
-    this.express.use('/api/v1/action', isUserInRole('user'), ActionRouter);
     this.express.use('/api/v1/userpreferencedefinition', isUserInRole('user'), UserPreferenceDefinitionRouter);
     this.express.use('/api/v1/userpreferencevalue', isUserInRole('user'), UserPreferenceValueRouter);
     this.express.use('/api/v1/widgets', isUserInRole('user'), WidgetsRouter);
