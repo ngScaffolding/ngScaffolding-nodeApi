@@ -2,6 +2,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { DataSourceRequest } from '../../models/index';
 import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
 
+const IncomingForm = require('formidable').IncomingForm;
+
 const winston = require('../../config/winston');
 
 export class DataSourceRouter {
@@ -12,16 +14,24 @@ export class DataSourceRouter {
     }
 
     public async postDataSource(req: Request, res: Response) {
-        let dataRequest = req.body as DataSourceRequest;
+        var form = new IncomingForm();
+        var dataRequest: DataSourceRequest;
 
-        let capRes = res;
+        form.parse(req, (err, fields, files) => {
+            let dataRequest = JSON.parse(fields['dataSourceRequest']);
 
-        let dataResults = await DataSourceResolver.resolve(dataRequest, req).catch(err => {
-            winston.error(err);
-            capRes.status(500).send('Call failed');
-            return;
+            let capRes = res;
+
+            let dataResults = DataSourceResolver.resolve(dataRequest, req)
+                .then(dataResults => {
+                    capRes.json(dataResults);
+                })
+                .catch(err => {
+                    winston.error(err);
+                    capRes.status(500).send('Call failed');
+                    return;
+                });
         });
-        capRes.json(dataResults);
     }
 
     init() {
