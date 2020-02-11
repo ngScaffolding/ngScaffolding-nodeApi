@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { DataSourceRequest } from '../../models/index';
 import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
+import { ExtractedFormData, extractFormData } from '../../utils/formData.helper';
 
 const winston = require('../../config/winston');
 
@@ -12,16 +13,21 @@ export class DataSourceRouter {
     }
 
     public async postDataSource(req: Request, res: Response) {
-        let dataRequest = req.body as DataSourceRequest;
+        var dataRequest: DataSourceRequest;
+
+        const extractedForm = await extractFormData(req);
 
         let capRes = res;
 
-        let dataResults = await DataSourceResolver.resolve(dataRequest, req).catch(err => {
-            winston.error(err);
-            capRes.status(500).send('Call failed');
-            return;
-        });
-        capRes.json(dataResults);
+        let dataResults = DataSourceResolver.resolve(extractedForm.dataSourceRequest, req)
+            .then(dataResults => {
+                capRes.json(dataResults);
+            })
+            .catch(err => {
+                winston.error(err);
+                capRes.status(500).send('Call failed');
+                return;
+            });
     }
 
     init() {
