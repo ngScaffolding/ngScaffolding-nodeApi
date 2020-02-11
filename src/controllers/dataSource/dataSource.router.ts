@@ -3,6 +3,8 @@ import { DataSourceRequest } from '../../models/index';
 import { DataSourceResolver } from '../../dataSources/dataSource.resolver';
 import { ExtractedFormData, extractFormData } from '../../utils/formData.helper';
 
+const IncomingForm = require('formidable').IncomingForm;
+
 const winston = require('../../config/winston');
 
 export class DataSourceRouter {
@@ -13,6 +15,7 @@ export class DataSourceRouter {
     }
 
     public async postDataSource(req: Request, res: Response) {
+
         var dataRequest: DataSourceRequest;
 
         const extractedForm = await extractFormData(req);
