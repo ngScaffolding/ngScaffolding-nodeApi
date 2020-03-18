@@ -13,6 +13,7 @@ import {
 } from '../../models/index';
 import { MSSQLHelpers } from './msSQLHelpers';
 
+const winston = require('../../config/winston');
 const sql = require('mssql');
 
 export class MsSQLDataAccess implements IDataAccessLayer {
@@ -77,8 +78,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
             ).then(results => {
                 let retVal: BaseDataSource = null;
                 if (results.recordset && results.recordset.length === 1) {
-                    retVal = JSON.parse(results.recordset[0]['Value']);
-                    var x = 0;
+                    try {
+                        retVal = JSON.parse(results.recordset[0]['Value']);
+                    } catch (err) {
+                        winston.error(`Failed JSON decode dataSource ${name}`, err);
+                        reject(err);
+                    }
                 }
                 resolve(retVal);
             });
@@ -104,7 +109,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
             ).then(results => {
                 let retVal: CoreMenuItem = null;
                 if (results.recordset && results.recordset.length === 1) {
-                    retVal = JSON.parse(results.recordset[0]['Value']);
+                    try {
+                        retVal = JSON.parse(results.recordset[0]['Value']);
+                    } catch (err) {
+                        winston.error(`Failed JSON decode MenuItem ${name}`, err);
+                        reject(err);
+                    }
                 }
                 resolve(retVal);
             });
@@ -112,17 +122,25 @@ export class MsSQLDataAccess implements IDataAccessLayer {
     }
     getMenuItems(): Promise<CoreMenuItem[]> {
         return new Promise((resolve, reject) => {
-            this.runCommand(`SELECT [Name] ,[Value] FROM [dbo].[${this.tablePrefix}MenuItems]`).then(results => {
-                let retVal: CoreMenuItem[] = [];
-                if (results.recordset) {
-                    for (const loopValue of results.recordset) {
-                        retVal.push(JSON.parse(loopValue['Value']));
+            this.runCommand(`SELECT [Name] ,[Value] FROM [dbo].[${this.tablePrefix}MenuItems]`).then(
+                results => {
+                    let retVal: CoreMenuItem[] = [];
+                    if (results.recordset) {
+                        for (const loopValue of results.recordset) {
+                            try {
+                                retVal.push(JSON.parse(loopValue['Value']));
+                            } catch (err) {
+                                winston.error(`Failed JSON decode MenuItem`, err);
+                                reject(err);
+                            }
+                        }
                     }
+                    resolve(retVal);
+                },
+                err => {
+                    let x = 0;
                 }
-                resolve(retVal);
-            }, err=>{
-                let x =0;
-            });
+            );
         });
     }
     saveMenuItem(menuItem: CoreMenuItem): Promise<CoreMenuItem> {
@@ -149,7 +167,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
             ).then(results => {
                 let retVal: ReferenceValue = null;
                 if (results.recordset && results.recordset.length === 1) {
-                    retVal = JSON.parse(results.recordset[0]['Value']);
+                    try {
+                        retVal = JSON.parse(results.recordset[0]['Value']);
+                    } catch (err) {
+                        winston.error(`Failed JSON decode Reference Value ${name}`, err);
+                        reject(err);
+                    }
                 }
                 resolve(retVal);
             });
@@ -177,7 +200,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
                     let retVal: UserPreferenceDefinition[] = [];
                     if (results.recordset) {
                         for (const loopValue of results.recordset) {
-                            retVal.push(JSON.parse(loopValue['Value']));
+                            try {
+                                retVal.push(JSON.parse(loopValue['Value']));
+                            } catch (err) {
+                                winston.error(`Failed JSON decode Widget ${loopValue['Name']}`, err);
+                                reject(err);
+                            }
                         }
                     }
                     resolve(retVal);
@@ -250,7 +278,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
             ).then(results => {
                 let retVal: WidgetModelBase = null;
                 if (results.recordset && results.recordset.length === 1) {
-                    retVal = JSON.parse(results.recordset[0]['Value']);
+                    try {
+                        retVal = JSON.parse(results.recordset[0]['Value']);
+                    } catch (err) {
+                        winston.error(`Failed JSON decode Widget ${name}`, err);
+                        reject(err);
+                    }
                 }
                 resolve(retVal);
             });
@@ -262,7 +295,12 @@ export class MsSQLDataAccess implements IDataAccessLayer {
                 let retVal: WidgetModelBase[] = [];
                 if (results.recordset) {
                     for (const loopValue of results.recordset) {
-                        retVal.push(JSON.parse(loopValue['Value']));
+                        try {
+                            retVal.push(JSON.parse(loopValue['Value']));
+                        } catch (err) {
+                            winston.error(`Failed JSON decode Widget ${loopValue['Name']}`, err);
+                            reject(err);
+                        }
                     }
                 }
                 resolve(retVal);
