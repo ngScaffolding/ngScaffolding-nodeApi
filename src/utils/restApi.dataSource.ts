@@ -145,7 +145,7 @@ export class RESTApiHandler {
                     },
                     error => {
                         winston.error(error);
-                        resolve(null);
+                        reject(null);
                     }
                 );
             });

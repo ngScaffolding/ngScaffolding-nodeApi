@@ -19,7 +19,7 @@ export class RolesRouter {
   public getRoles(req: Request, res: Response, next: NextFunction) {
     const ds: IDataSourceSwitch = DataSourceSwitch.default;
     var userDetails = req['userDetails'] as BasicUser;
-    const isAdmin = (userDetails.roles && userDetails.roles.some(role => role.toLowerCase() === "admin"));
+    const isAdmin = (userDetails.role && userDetails.role.some(role => role.toLowerCase() === "admin"));
     let capRes: any = res;
 
     var dataAccess = DataSourceSwitch.default.dataSource as IDataAccessLayer;
@@ -29,7 +29,7 @@ export class RolesRouter {
     const allRoles = dataAccess.getRoles().then(roles => {
       const userRoles: Role[] = [];
       roles.forEach(role => {
-        if (isAdmin || (userDetails.roles && userDetails.roles.some(loopRole => loopRole.toLowerCase() === role.name.toLowerCase()))) {
+        if (isAdmin || (userDetails.role && userDetails.role.some(loopRole => loopRole.toLowerCase() === role.name.toLowerCase()))) {
           userRoles.push(role);
         }
       });

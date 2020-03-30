@@ -17,8 +17,8 @@ export default function isUserInRole(authorisedRoles: string | string[]): Reques
 
     let userIsCool = false;
     // Do we have authority
-    if (userDetails.roles) {
-      userDetails.roles.forEach(userRole => {
+    if (userDetails.role) {
+      userDetails.role.forEach(userRole => {
         if (checkRoles.find(checkRole => checkRole === userRole)) {
           // User Authoirised
           userIsCool = true;

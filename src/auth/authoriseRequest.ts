@@ -14,18 +14,16 @@ export default async function authoriseRequest(req: Request, res: Response, next
 
     // Validate & Decode Token
     try {
-      let jwtDetails = jwt.verify(apiToken, process.env.JWT_PUBLIC_KEY);
+      let jwtDetails = jwt.decode(apiToken);
 
       // Setup UserDetailsModel from Token Details
       let userDetails: BasicUser = { ...jwtDetails };
-      userDetails.userId = jwtDetails['sub'];
+      userDetails.userId = jwtDetails[process.env.JWT_USERID_FIELD || 'sub'];
 
       // Add UserDetailsModel to the Request Object
       req['userDetails'] = userDetails;
     } catch (err) {
       req['userDetails'] = null;
-      // res.sendStatus(401);
-      // return;
     }
   } else {
     req['userDetails'] = null;

@@ -35,7 +35,7 @@ export class MenuItemRouter {
             .forEach(menu => {
               let dashboard = menu.menuDetails as DashboardModel;
               dashboard.widgets.forEach(widget => {
-                widget.widget = resultsCol[1].find(searchWidget => searchWidget.name === widget.widgetName);
+                widget.widget = resultsCol[1].find(searchWidget => searchWidget.id === widget.widgetId);
               });
             });
 
