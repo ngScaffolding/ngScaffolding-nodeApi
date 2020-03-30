@@ -24,6 +24,7 @@ export enum AppSettings {
     authClientSecret = 'authClientSecret',
     authScope = 'authScope',
     authUserIdIsEmail = 'authUserIdIsEmail',
+    authUserUniqueField = 'authUserUniqueField',
     authTokenEndpoint = 'authTokenEndpoint',
     authPasswordMinLength = 'authPasswordMinLength',
     authPasswordUpperCase = 'authPasswordUpperCase',
@@ -42,12 +43,19 @@ export enum AppSettings {
     showProfilePicture = 'showProfilePicture',
     showUserSetting = 'showUserSetting',
     menuType = 'menuType',
+    compactMode = 'compactMode',
+    agGridTheme = 'agGridTheme',
 
     // Input Builder
     inputShowCalendarIcon = 'inputShowCalendarIcon',
     inputDateTimeFormat = 'inputDateTimeFormat',
     inputDateFormat = 'inputDateFormat',
     inputDateForceUTC = 'inputDateForceUTC',
+    inputDateShowButtonBar= 'inputDateShowButtonBar',
+
+    // File Uploads
+    maximumFileSize = 'maximumFileSize',
+    allowedFileTypes = 'allowedFileTypes', // '.doc|.xlsx|audio/*|video/*|image/*'  See: https://www.w3schools.com/tags/att_input_accept.asp
 
     // moment Formats for dates
     dateTimeFormat = 'dateTimeFormat',

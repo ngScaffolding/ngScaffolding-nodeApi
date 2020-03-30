@@ -29,9 +29,10 @@ export class GridViewDetail {
 
     defaultSort?: string;
 
-    columns: Array<ColumnModel>;
-    configuredColumns?: Array<ColumnModel>;
-    isActionColumnSplitButton?: boolean;
+    columns: Array<any>;
+    configuredColumns?: Array<any>;
+    isActionColumnSplitButton?: any;
+    autoSizeColumns?: boolean;
 
     filtersLocation?: string;
 
@@ -44,7 +45,7 @@ export class GridViewDetail {
     selectDataSourceName?: string;
 
     // Or here is the data
-    dataValues?: any[];
+    dataValues?: any;
 
     actions?: Array<Action>;
 }

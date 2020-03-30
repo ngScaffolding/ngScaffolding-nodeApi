@@ -48,6 +48,7 @@ export class InputDetail {
     containerClass?: string; // Either full 12 cols or smaller if help present
     classes?: string;
     hidden?: boolean;
+    tabindex?: number;
 
     readonly?: boolean;
 
@@ -74,6 +75,9 @@ export class InputDetail {
 
     validateMaxLength?: number;
     validateMaxLengthMessage?: string;
+}
+
+export class InputDetailFile extends InputDetail {
 }
 
 export class InputDetailTextBox extends InputDetail {

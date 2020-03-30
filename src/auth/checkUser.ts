@@ -5,6 +5,8 @@ export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
     // This means that items with no allowedRoles - Everyone gets to play
     if(!menu.roles) return true;
 
+      
+
     var checkUserRoles = [...user.role];
     var checkAllowedRoles = [];
 
