@@ -5,8 +5,9 @@ export function checkUser(user: BasicUser, menu: CoreMenuItem): boolean {
     
     // For owned menu items only owner is allowed
     if (menu.ownerId) {
-        const Uniquefield = getSetting(AppSettings.authUserUniqueField, 'userId');
-        return user[Uniquefield] === menu.ownerId;
+        const uniqueField = getSetting(AppSettings.authUserUniqueField, 'userId');
+
+        return user[uniqueField] === menu.ownerId;
     }
 
     // This means that items with no allowedRoles - Everyone gets to play

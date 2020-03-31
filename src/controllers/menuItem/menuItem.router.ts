@@ -136,9 +136,9 @@ export class MenuItemRouter {
     var userDetails = req['userDetails'] as BasicUser;
     var dataAccess = DataSourceSwitch.default.dataSource;
 
-    var MenuItem = req.body as CoreMenuItem;
+    var menuItem = req.body as CoreMenuItem;
 
-    dataAccess.saveMenuItem(MenuItem as CoreMenuItem).then(newMenuItem => {
+    dataAccess.saveMenuItem(menuItem as CoreMenuItem).then(newMenuItem => {
       res.json(newMenuItem);
     });
   }

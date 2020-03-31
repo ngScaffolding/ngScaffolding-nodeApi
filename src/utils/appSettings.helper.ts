@@ -1,3 +1,3 @@
 export function getSetting(name: string, defaultValue: any = null): any {
-    return process.env[name] || defaultValue;
+    return process.env[`APPSETTINGS_${name}`] || defaultValue;
 }

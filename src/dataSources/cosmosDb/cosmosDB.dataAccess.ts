@@ -51,10 +51,11 @@ export class CosmosDBDataAccess implements IDataAccessLayer {
         return this.cosmosDBHelper.find(`SELECT * FROM c where c.partitionKey = 'menuItems'`);
     }
     saveMenuItem(menuItem: CoreMenuItem): Promise<any> {
-        return this.cosmosDBHelper.updateItem(menuItem, 'dataSources');
+        menuItem['id'] = menuItem.name;
+        return this.cosmosDBHelper.upsertItem(menuItem.name, menuItem, 'menuItems');
     }
     deleteMenuItem(name: string): Promise<any> {
-        return this.cosmosDBHelper.deleteItem(name, 'dataSources');
+        return this.cosmosDBHelper.deleteItem(name, 'menuItems');
     }
     getReferenceValue(name: string): Promise<ReferenceValue> {
         return this.cosmosDBHelper.getItem(name,'menureferenceValues');

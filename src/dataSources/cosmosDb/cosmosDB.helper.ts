@@ -49,6 +49,16 @@ export class CosmosDBHelper {
         return doc;
     }
 
+    async upsertItem(id, item, partitionKey) {
+        let existing = await this.getItem(item.name, partitionKey);
+        if (existing) {
+            return await this.updateItem(item, partitionKey);
+        } else {
+            item.partitionKey = partitionKey;
+            return await this.addItem(item);
+        }
+    }
+
     async updateItem(item, partitionKey) {
         // debug('Update an item in the database');
         //const doc = await this.getItem(item.name, partitionKey);
