@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { ReferenceValue, DataSourceTypes, ReferenceValueItem } from '../../models/index';
+import { ReferenceValue, DataSourceTypes, ReferenceValueItem, BasicUser } from '../../models/index';
 import { IDataSourceSwitch } from '../../dataSourceSwitch';
 import { RESTApiHandler } from '../../utils/restApi.dataSource';
 
@@ -26,9 +26,11 @@ export class ReferenceValuesRouter {
 
         let arrRefValueGetters: Array<Promise<ReferenceValue>> = [];
 
+        let user = req['userDetails'] as BasicUser;
+
         ds.dataSource.getReferenceValue(name).then(
             refValue => {
-                ReferenceValuesRouter.populateReferenceValue(refValue, seed, req.headers.authorization).then(
+                ReferenceValuesRouter.populateReferenceValue(refValue, seed, user.userId, req.headers.authorization).then(
                     refValue => {
                         res.json(refValue);
                     },
@@ -77,10 +79,12 @@ export class ReferenceValuesRouter {
     private static populateReferenceValue(
         refValue: ReferenceValue,
         seed: string,
+        userId: string,
         authHeader: string
     ): Promise<ReferenceValue> {
         return new Promise<ReferenceValue>((resolve, reject) => {
             const ds: IDataSourceSwitch = DataSourceSwitch.default;
+            const inputValues = {seed: seed, userId: userId};
 
             // Data Comes from somewhere else
             if (refValue.dataSourceName) {
@@ -89,7 +93,7 @@ export class ReferenceValuesRouter {
                     dataSource => {
                         switch (dataSource.type) {
                             case DataSourceTypes.SQL: {
-                                SQLCommandHandler.runCommand(dataSource, { seed: seed }).then(
+                                SQLCommandHandler.runCommand(dataSource, inputValues).then(
                                     dataResults => {
                                         if (!dataResults) {
                                             reject();
@@ -120,7 +124,7 @@ export class ReferenceValuesRouter {
                             case DataSourceTypes.RestApi: {
                                 RESTApiHandler.runCommand(
                                     dataSource,
-                                    { seed: seed },
+                                    inputValues,
                                     null,
                                     authHeader
                                 ).then(
