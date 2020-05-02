@@ -106,12 +106,8 @@ export class RESTApiHandler {
                         if (body) {
                             options.json = body;
                         } else {
-                            options.json = {};
+                            options.json = { ...currentRow, ...inputDetails };
                         }
-                        // // get vaues here
-                        // options.json = { ...currentRow, ...inputDetails };
-
-                        //options.json = true;
                     }
                 }
 
