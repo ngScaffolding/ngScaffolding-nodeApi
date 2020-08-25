@@ -55,7 +55,7 @@
     "fs-extra": "^7.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^4.0.2",
-    "highcharts": "^6.1.1",
+    "highcharts": "^7.2.2",
     "jsonwebtoken": "^8.3.0",
     "minimist": "^1.2.0",
     "mongodb": "^3.5.0",
