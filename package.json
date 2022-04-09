@@ -57,7 +57,7 @@
     "gulp-typescript": "^4.0.2",
     "highcharts": "^6.1.1",
     "jsonwebtoken": "^8.3.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "mongodb": "^3.5.0",
     "morgan": "^1.9.0",
     "mssql": "^4.2.1",
